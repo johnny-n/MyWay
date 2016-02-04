@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:text="50 Washington St, Santa Clara, CA"
+        android:id="@+id/address_item_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="33dp"/>
+
+    <Button
+        android:text="-> (GPS)"
+        android:id="@+id/navigator_item_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/address_item_text_view"
+        android:layout_toEndOf="@+id/address_item_text_view"
+        android:layout_marginTop="42dp"/>
+
+    <TextView
+        android:text="30 minutes"
+        android:id="@+id/travel_time_item_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/navigator_item_button"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="32dp"/>
+
+</RelativeLayout>
