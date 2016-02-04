@@ -60,6 +60,13 @@ public class DirectionsFragment extends Fragment {
             mTravelTime = (TextView) itemView.findViewById(R.id.travel_time_item_text_view);
             mNavigatorButton = (Button) itemView.findViewById(R.id.navigator_item_button);
         }
+
+        public void setListItems(Location location) {
+            String locationName = location.getName();
+            String locationAddress = location.getAddress();
+
+            mAddress.setText(locationName);
+        }
     }
 
     private class DirectionAdapter extends RecyclerView.Adapter<DirectionItemViewHolder> {
