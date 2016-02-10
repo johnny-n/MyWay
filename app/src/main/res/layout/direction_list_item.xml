@@ -3,7 +3,6 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-
     <TextView
         android:text="50 Washington St, Santa Clara, CA, 95050"
         android:id="@+id/address_item_text_view"

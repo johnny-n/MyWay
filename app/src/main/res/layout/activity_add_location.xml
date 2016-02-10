@@ -7,15 +7,8 @@
 
     <fragment
         android:id="@+id/place_autocomplete_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-        tools:layout="@layout/place_autocomplete_item_powered_by_google"/>
-    
-    <EditText
-        android:hint="Enter name for place"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
 
 </LinearLayout>
