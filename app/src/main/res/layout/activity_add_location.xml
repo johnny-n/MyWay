@@ -48,7 +48,7 @@
     <Button
         android:id="@+id/confirm_add_place_button"
         android:text="@string/plus_sign"
-        android:background="@drawable/selector_add_place_button"
+        android:background="@drawable/add_place_button_selector"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_alignParentBottom="true"

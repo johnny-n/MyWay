@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:text="Sign up for a MyWay account"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:paddingBottom="15dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:background="@color/signUpBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:text="@string/sign_up_name_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/SignUpTextView"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/sign_up_first_name_edit_text"
+                android:hint="@string/sign_up_first_name_hint"
+                android:maxLength="12"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/SignUpEditText"/>
+
+            <EditText
+                android:id="@+id/sign_up_last_name_edit_text"
+                android:hint="@string/sign_up_last_name_hint"
+                android:maxLength="12"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/SignUpEditText"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:text="@string/sign_up_username_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/SignUpTextView"/>
+
+        <EditText
+            android:id="@+id/username_create_edit_text"
+            android:hint="@string/sign_up_username_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/SignUpEditText"/>
+
+        <TextView
+            android:id="@+id/username_retry_text_view"
+            android:text="Please enter a valid email address"
+            android:textColor="@android:color/holo_red_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:text="@string/sign_up_password_create_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/SignUpTextView"/>
+
+        <EditText
+            android:id="@+id/password_create_edit_text"
+            android:maxLength="15"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/SignUpEditText"/>
+
+        <TextView
+            android:text="@string/sign_up_password_confirm_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/SignUpTextView"/>
+
+        <EditText
+            android:id="@+id/password_confirm_edit_text"
+            android:maxLength="15"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/SignUpEditText"/>
+
+        <TextView
+            android:id="@+id/password_retry_text_view"
+            android:text="These password's don't match. Try again?"
+            android:textColor="@android:color/holo_red_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/sign_up_complete_button"
+            android:text="@string/sign_up_complete_button"
+            android:background="@drawable/primary_button_selector"
+            android:layout_gravity="right"
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/PrimaryButton"/>
+
+    </LinearLayout>
+
+</LinearLayout>

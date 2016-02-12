@@ -3,4 +3,6 @@
     <color name="colorPrimary">#33cc33</color>
     <color name="colorPrimaryDark">#248f24</color>
     <color name="colorAccent">#b3b3b3</color>
+    <color name="signUpBackground">#e6e6e6</color>
+    <color name="white">@android:color/white</color>
 </resources>
