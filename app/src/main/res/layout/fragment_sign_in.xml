@@ -1,7 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
+              android:descendantFocusability="beforeDescendants"
+              android:focusableInTouchMode="true"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+
+    <TextView
+        android:text="@string/sign_in_title_text_view"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:paddingBottom="15dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:background="@color/signUpBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="@string/sign_in_username_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/SignUpTextView"/>
+
+        <EditText
+            android:id="@+id/sign_in_username_edit_text"
+            android:hint="@string/username_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/SignUpEditText"/>
+
+        <TextView
+            android:id="@+id/username_retry_text_view"
+            android:text="Please enter a valid email address"
+            android:textColor="@android:color/holo_red_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:text="@string/sign_in_password_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/SignUpTextView"/>
+
+        <EditText
+            android:id="@+id/sign_in_password_edit_text"
+            android:maxLength="15"
+            android:password="true"
+            android:inputType="textPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/SignUpEditText"/>
+
+        <TextView
+            android:text="@string/sign_up_for_account_text_view"
+            android:id="@+id/sign_up_for_account_text_view"
+            android:textColor="@android:color/holo_blue_dark"
+            android:paddingTop="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/sign_in_button"
+            android:text="@string/sign_in_button"
+            android:background="@drawable/primary_button_selector"
+            android:layout_gravity="right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/PrimaryButton"/>
+
+    </LinearLayout>
 
 </LinearLayout>

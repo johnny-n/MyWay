@@ -34,7 +34,7 @@ public class DirectionsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_directions, container, false);
 
         // An instance of GeoApiContext is required to use Google Maps API
-        final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyAZM_UC4okOPnAfsUFdn0tKyT9W04296Yo");
+        final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyAXSGlwghZsgIFWY2PIBYeyAD-Opq0pP2g");
 
         // Initialize views
         mToAddress = (EditText) v.findViewById(R.id.address_to_edit_text);

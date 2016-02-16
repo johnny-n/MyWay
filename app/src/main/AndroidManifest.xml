@@ -12,16 +12,18 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity android:name=".SignUpActivity" >
+        <activity android:name=".SignInActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SignUpActivity" />
+        <activity android:name=".DirectionsActivity" />
         <!-- API KEY for Google Places API -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAZM_UC4okOPnAfsUFdn0tKyT9W04296Yo" />
+            android:value="AIzaSyAXSGlwghZsgIFWY2PIBYeyAD-Opq0pP2g" />
     </application>
 
 </manifest>

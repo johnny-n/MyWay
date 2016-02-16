@@ -2,14 +2,24 @@
     <string name="app_name">MyWay</string>
     <string name="plus_sign">+</string>
 
+    <string name="username_hint">example\@email.com</string>
+
+    <string name="sign_up_complete_button">Complete</string>
+    <string name="sign_up_title_text_view">Sign up for a MyWay account</string>
     <string name="sign_up_name_text_view">Name</string>
     <string name="sign_up_first_name_hint">First</string>
     <string name="sign_up_last_name_hint">Last</string>
     <string name="sign_up_username_text_view">Username</string>
-    <string name="sign_up_username_hint">example\@email.com</string>
     <string name="sign_up_username_retry_text_view">Please enter a valid email address</string>
     <string name="sign_up_password_create_text_view">Create a password</string>
     <string name="sign_up_password_confirm_text_view">Confirm your password</string>
     <string name="sign_up_password_retry_text_view">These passwords don\'t match. Try again?</string>
-    <string name="sign_up_complete_button">Complete</string>
+
+
+    <string name="sign_in_title_text_view">Sign into your MyWay account</string>
+    <string name="sign_in_username_text_view">Username</string>
+    <string name="sign_in_password_text_view">Password</string>
+    <string name="sign_in_button">Sign in</string>
+    <string name="sign_up_for_account_text_view">Don\'t have an account? Sign up now!</string>
+
 </resources>

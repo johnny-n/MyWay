@@ -1,10 +1,12 @@
 package com.projects.johnny.myway;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +43,7 @@ public class SignUpFragment extends Fragment {
 
         // Set up Firebase database
         Firebase.setAndroidContext(getActivity());
-        final Firebase mFirebaseRef = new Firebase("https://myways.firebaseio.com/");
+        final Firebase mFirebaseRef = new Firebase("https://myways.firebaseIO.com/");
 
 
         // Username in this case would be the email
@@ -94,11 +96,13 @@ public class SignUpFragment extends Fragment {
                     mFirebaseRef.createUser(username, password, new Firebase.ValueResultHandler<Map<String, Object>>() {
                         @Override
                         public void onSuccess(Map<String, Object> result) {
-                            System.out.println("Successfully created user account with uid: " + result.get("uid"));
+                            Toast.makeText(getContext(), "Successfully created user account!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getActivity(), SignInActivity.class);
+                            startActivity(intent);
                         }
                         @Override
                         public void onError(FirebaseError firebaseError) {
-                            Toast.makeText(getContext(), "Error creating account...", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

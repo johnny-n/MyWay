@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
+              android:descendantFocusability="beforeDescendants"
+              android:focusableInTouchMode="true"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
@@ -65,7 +67,7 @@
 
         <EditText
             android:id="@+id/username_create_edit_text"
-            android:hint="@string/sign_up_username_hint"
+            android:hint="@string/username_hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/SignUpEditText"/>
@@ -86,6 +88,8 @@
         <EditText
             android:id="@+id/password_create_edit_text"
             android:maxLength="15"
+            android:password="true"
+            android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/SignUpEditText"/>
@@ -99,6 +103,8 @@
         <EditText
             android:id="@+id/password_confirm_edit_text"
             android:maxLength="15"
+            android:password="true"
+            android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/SignUpEditText"/>
