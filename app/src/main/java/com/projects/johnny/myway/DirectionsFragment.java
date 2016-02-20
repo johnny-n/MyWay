@@ -1,9 +1,18 @@
 package com.projects.johnny.myway;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,22 +20,37 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 
-public class DirectionsFragment extends Fragment {
+public class DirectionsFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String GOOGLE_MAPS_API_REQUEST = "https://maps.googleapis.com/maps/api/directions/";
-    private static final int DURATION_INDEX = 1;
+    private static final int LOCATION_REQUEST_CODE = 2;
 
-    EditText mToAddress;
-    Button mTestButton;
+    private GoogleApiClient mGoogleApiClient;
+
+    RecyclerView mRecyclerView;
+
+    MyLocation[] locations = {
+            new MyLocation("Home", "50 Washington Street, Santa Clara, CA"),
+            new MyLocation("School", "San Jose State University, San Jose, CA"),
+            new MyLocation("Parents", "2641 Quail Dr, Union City, CA"),
+            new MyLocation("Work", "2089 El Camino Real, Santa Clara, CA"),
+            new MyLocation("Target",  "533 Coleman Ave, San Jose, CA"),
+            new MyLocation("Trader Joes", "Coleman Ave, San Jose, CA"),
+            new MyLocation("Japantown", "618 N 3rd St, San Jose, CA")
+    };
 
     @Nullable
     @Override
@@ -36,39 +60,81 @@ public class DirectionsFragment extends Fragment {
         // An instance of GeoApiContext is required to use Google Maps API
         final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyAXSGlwghZsgIFWY2PIBYeyAD-Opq0pP2g");
 
-        // Initialize views
-        mToAddress = (EditText) v.findViewById(R.id.address_to_edit_text);
-        mTestButton = (Button) v.findViewById(R.id.test_button);
+        // Create instance of GoogleAPIClient
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
 
-        mTestButton.setOnClickListener(new View.OnClickListener() {
+//        {
+//            // Create request for a Google Directions Api
+//            // Set origin here
+//            DirectionsApiRequest directionsApiRequest = DirectionsApi.newRequest(context)
+//                    .origin("50 Washington St, Santa Clara, CA 95050")
+//                    .mode(TravelMode.DRIVING);
+//
+//            // Set the address we want to go to
+//            directionsApiRequest.destination("2641 Quail Dr, Union City, CA 94587");
+//
+//            try {
+//                // Obtain result from api request
+//                DirectionsResult result = directionsApiRequest.await();
+//                // Obtain travel time deep within result
+//                String travelTime = result.routes[0].legs[0].duration.humanReadable;
+//
+//                Toast.makeText(getActivity(), "Duration: " + travelTime, Toast.LENGTH_SHORT).show();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+
+        MyLocation from = new MyLocation("Home", "50 Washington Street, Santa Clara, CA");
+        MyLocation to = new MyLocation("School", "San Jose State University, San Jose, CA");
+
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(new DirectionAdapter());
+
+        /**
+         * Note: You need to explicitly check in code whether location permissions are granted. If they are
+         *       not granted, then you need to call Activity.Compat.requestpermissions to request it.
+         */
+        LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        final Location location;
+
+        if ( ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions( getActivity(), new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION  }, LOCATION_REQUEST_CODE );
+            Log.i("Location Check", "Completed");
+        }
+
+        location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        Button testLocationButton = (Button) v.findViewById(R.id.test_location);
+        testLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // Create request for a Google Directions Api
-                DirectionsApiRequest directionsApiRequest = DirectionsApi.newRequest(context)
-                        .origin("50 Washington St, Santa Clara, CA 95050")
-                        .mode(TravelMode.DRIVING);
-
-                // Set the address we want to go to
-                directionsApiRequest.destination(mToAddress.getText().toString());
-
-                try {
-                    // Obtain result from api request
-                    DirectionsResult result = directionsApiRequest.await();
-                    // Obtain travel time deep within result
-                    String travelTime = result.routes[0].legs[0].duration.humanReadable;
-
-                    Toast.makeText(getActivity(), "Duration: " + travelTime, Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Log.d("Location", "Latitude: " + location.getLatitude());
+                Log.d("Location", "Longitude: " + location.getLongitude());
             }
         });
 
-        Location from = new Location("Home", "50 Washington Street, Santa Clara, CA");
-        Location to = new Location("School", "San Jose State University, San Jose, CA");
-
         return v;
+    }
+
+
+    @Override
+    public void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
     }
 
     // You must explicitly tell the FragmentManager that your fragment should receive
@@ -90,18 +156,22 @@ public class DirectionsFragment extends Fragment {
 
         TextView mAddress;
         TextView mTravelTime;
-        Button mNavigatorButton;
+        TextView mNavigatorTextView;
+        // test
+        FrameLayout mFrameLayout;
 
         public DirectionItemViewHolder(View itemView) {
             super(itemView);
             mAddress = (TextView) itemView.findViewById(R.id.address_item_text_view);
             mTravelTime = (TextView) itemView.findViewById(R.id.travel_time_item_text_view);
-            mNavigatorButton = (Button) itemView.findViewById(R.id.navigator_item_button);
+            mNavigatorTextView = (TextView) itemView.findViewById(R.id.navigator_item_button);
+            // test
+            mFrameLayout = (FrameLayout) itemView.findViewById(R.id.navigation_background);
         }
 
-        public void setListItems(Location location) {
-            String locationName = location.getName();
-            String locationAddress = location.getAddress();
+        public void setListItems(MyLocation myLocation) {
+            String locationName = myLocation.getNameOfPlace();
+            String locationAddress = myLocation.getAddress();
             mAddress.setText(locationName);
         }
     }
@@ -111,18 +181,33 @@ public class DirectionsFragment extends Fragment {
         @Override
         public DirectionItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
-            View view = inflater.inflate(R.layout.direction_list_item, parent, false);
+            View view = inflater.inflate(R.layout.direction_list_item_card_view, parent, false);
             return new DirectionItemViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(DirectionItemViewHolder holder, int position) {
-
+            holder.setListItems(locations[position]);
         }
 
         @Override
         public int getItemCount() {
-            return 0;
+            return locations.length;
         }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d("GoogleApiClient", "Successfully connected to GoogleApiClient!");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.e("GoogleApiClient", "Connection to GoogleApiClient suspended.");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e("GoogleApiClient", connectionResult.getErrorMessage());
     }
 }

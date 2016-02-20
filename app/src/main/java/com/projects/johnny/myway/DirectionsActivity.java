@@ -2,6 +2,10 @@ package com.projects.johnny.myway;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 public class DirectionsActivity extends SingleFragmentActivity {
 

@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#33cc33</color>
-    <color name="colorPrimaryDark">#248f24</color>
-    <color name="colorAccent">#b3b3b3</color>
-    <color name="signUpBackground">#e6e6e6</color>
+    <color name="colorPrimary">#00bad2</color>
+    <color name="colorPrimaryDark">#00a3b8</color>
+    <color name="colorAccent">#3F51B5</color>
+    <color name="signUpBackground">#E6E6E6</color>
     <color name="white">@android:color/white</color>
+
+    <color name="cardviewBackground">#64FFDA</color>
+
+
+
 </resources>
