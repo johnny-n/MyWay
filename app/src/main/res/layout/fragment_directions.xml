@@ -8,15 +8,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Button
-        android:text="Test location"
-        android:id="@+id/test_location"
-        android:layout_width="wrap_content"
+        android:text="Refresh"
+        android:id="@+id/test_refresh"
+        android:padding="100dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
