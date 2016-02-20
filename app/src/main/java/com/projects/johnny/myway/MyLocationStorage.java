@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
+// Singleton class for easy storage
 public class MyLocationStorage {
     private static MyLocationStorage sLocationStorage;
     private ArrayList<MyLocation> mLocations;
