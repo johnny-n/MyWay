@@ -11,13 +11,14 @@
         android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <Button
-            android:text="Add Location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <Button
-            android:text="Refresh list"
-            android:layout_width="wrap_content"
+
+        <TextView
+            android:text="Places from your location"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
     </android.support.v7.widget.Toolbar>

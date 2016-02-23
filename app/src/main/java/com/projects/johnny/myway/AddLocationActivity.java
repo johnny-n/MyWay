@@ -24,7 +24,6 @@ public class AddLocationActivity extends AppCompatActivity {
     private final boolean BUTTON_ENABLED = true;
     private final boolean BUTTON_DISABLED = false;
 
-    private MyLocationStorage mLocationStorage;
     private String locationAddress = "";
     private EditText mNicknameEditText;
 
@@ -32,9 +31,14 @@ public class AddLocationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_location);
-        mLocationStorage = MyLocationStorage.get(this);
 
         mNicknameEditText = (EditText) findViewById(R.id.add_location_nickname_edit_text);
+
+        // Firebase
+        App app = (App) getApplicationContext();
+        String UID = app.getUID();
+        Firebase.setAndroidContext(this);
+        final Firebase mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID).child("Locations");
 
         // Get reference to button and have it initially disabled
         final Button mConfirmAddPlaceButton = (Button) findViewById(R.id.confirm_add_place_button);
@@ -68,11 +72,13 @@ public class AddLocationActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Add location to storage with or without nickname, depending
                 //  on what the user wants.
+                String nickname;
                 if (mNicknameEditText.getText().length() > 0) {
-                    String nickname = mNicknameEditText.getText().toString();
-                    mLocationStorage.addLocation(new MyLocation(nickname, locationAddress));
+                    nickname = mNicknameEditText.getText().toString();
+                    mFirebaseRef.child(nickname).setValue(locationAddress);
                 } else {
-                    mLocationStorage.addLocation(new MyLocation(locationAddress));
+                    nickname = locationAddress;
+                    mFirebaseRef.child(nickname).setValue(locationAddress);
                 }
                 Intent intent = new Intent(getApplicationContext(), DirectionsActivity.class);
                 startActivity(intent);

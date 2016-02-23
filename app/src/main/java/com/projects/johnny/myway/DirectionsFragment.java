@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -26,7 +27,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -37,7 +41,10 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.TravelMode;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class DirectionsFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -58,14 +65,32 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_directions, container, false);
-        locations = MyLocationStorage.get(getActivity()).getLocations();
+        locations = new ArrayList<>();
 
         // Get reference to Firebase
         App app = (App) getActivity().getApplicationContext();
         String UID = app.getUID();
         Firebase.setAndroidContext(getActivity());
         Firebase mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID);
-        mFirebaseRef.child("Locations");
+
+        mFirebaseRef.child("Locations").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Obtain location data as Map object and iterate through, adding to locations variable
+                Map<String, String> mLocations = (Map<String, String>) dataSnapshot.getValue();
+                Iterator it = mLocations.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    MyLocation location = new MyLocation(pair.getKey().toString(), pair.getValue().toString());
+                    locations.add(location);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
 
         // Create instance of GoogleAPIClient
         if (mGoogleApiClient == null) {
