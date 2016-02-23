@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -59,7 +60,8 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     private Double lng;
 
     private RecyclerView mRecyclerView;
-    private List<MyLocation> locations;
+    private ArrayList<MyLocation> locations;
+    private Firebase mFirebaseRef;
 
     @Nullable
     @Override
@@ -71,8 +73,9 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         App app = (App) getActivity().getApplicationContext();
         String UID = app.getUID();
         Firebase.setAndroidContext(getActivity());
-        Firebase mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID);
+        mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID);
 
+        // Add single event listenere to get snapshot of data
         mFirebaseRef.child("Locations").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -119,7 +122,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(new DirectionAdapter());
+        mRecyclerView.setAdapter(new DirectionAdapter(locations));
 
         return v;
     }
@@ -155,6 +158,10 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ic_menu_refresh:
+                // TODO: Refresh/update traffic times
+                mFirebaseRef.child("Locations").removeEventListener(retrieveDataListener());
+                mFirebaseRef.child("Locations").addValueEventListener(retrieveDataListener());
+                mRecyclerView.setAdapter(new DirectionAdapter(locations));
                 mRecyclerView.getAdapter().notifyDataSetChanged();
                 return true;
             case R.id.ic_add_location:
@@ -184,7 +191,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
         public void setListItems(MyLocation myLocation) {
             String locationName = myLocation.getNameOfPlace();
-            String locationAddress = myLocation.getAddress();
+            final String locationAddress = myLocation.getAddress();
 
             // Create request for GoogleDirectionsApi
             // Last known location is set here
@@ -205,10 +212,27 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
             }
 
             mAddress.setText(locationName);
+
+            // Use implicit intent to use google maps
+            mNavigatorButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + locationAddress);
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
+                }
+            });
         }
     }
 
     private class DirectionAdapter extends RecyclerView.Adapter<DirectionItemViewHolder> {
+
+        ArrayList<MyLocation> mLocations;
+
+        public DirectionAdapter(ArrayList<MyLocation> locations) {
+            mLocations = locations;
+        }
 
         @Override
         public DirectionItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -226,8 +250,32 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         public int getItemCount() {
             return locations.size();
         }
+
+
     }
 
+    private ValueEventListener retrieveDataListener() {
+        return new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, String> mLocations = (Map<String, String>) dataSnapshot.getValue();
+                Iterator it = mLocations.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    locations = new ArrayList<>();
+                    MyLocation location = new MyLocation(pair.getKey().toString(), pair.getValue().toString());
+                    Log.d("Name", pair.getKey().toString());
+                    Log.d("Address", pair.getValue().toString());
+                    locations.add(location);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        };
+    }
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.d("GoogleApiClient", "Successfully connected to GoogleApiClient!");
