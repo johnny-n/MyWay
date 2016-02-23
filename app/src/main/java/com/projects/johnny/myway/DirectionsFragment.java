@@ -52,17 +52,6 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     private RecyclerView mRecyclerView;
     private List<MyLocation> locations;
 
-//    MyLocation[] locations = {
-//            new MyLocation("Home", "50 Washington Street, Santa Clara, CA"),
-//            new MyLocation("School", "San Jose State University, San Jose, CA"),
-//            new MyLocation("Parents", "2641 Quail Dr, Union City, CA"),
-//            new MyLocation("Work", "2089 El Camino Real, Santa Clara, CA"),
-//            new MyLocation("Target",  "533 Coleman Ave, San Jose, CA"),
-//            new MyLocation("Trader Joes", "Coleman Ave, San Jose, CA"),
-//            new MyLocation("Japantown", "618 N 3rd St, San Jose, CA"),
-//            new MyLocation("Henry's House", "Alexis Circle, Daly City, CA")
-//    };
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

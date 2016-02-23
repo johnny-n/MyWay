@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
@@ -26,6 +27,8 @@ public class SignInFragment extends Fragment {
     private TextView mUsernameRetry;
     private TextView mSignUpAccountTextView;
     private Button mSignInButton;
+
+    public static final String USER_UID_KEY = "USER_UID_KEY";
 
     @Nullable
     @Override
@@ -73,7 +76,11 @@ public class SignInFragment extends Fragment {
                     mFirebaseRef.authWithPassword(email, password, new Firebase.AuthResultHandler() {
                         @Override
                         public void onAuthenticated(AuthData authData) {
+                            // Pass user UID inside Bundle to next activity
+                            String UID = authData.getUid();
                             Intent intent = new Intent(getActivity(), DirectionsActivity.class);
+                            Bundle args = new Bundle();
+                            args.putSerializable(USER_UID_KEY, UID);
                             startActivity(intent);
                         }
 

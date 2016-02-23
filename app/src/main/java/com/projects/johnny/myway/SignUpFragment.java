@@ -97,6 +97,10 @@ public class SignUpFragment extends Fragment {
                         @Override
                         public void onSuccess(Map<String, Object> result) {
                             Toast.makeText(getContext(), "Successfully created user account!", Toast.LENGTH_SHORT).show();
+
+                            String UID = (String) result.get("uid");
+                            mFirebaseRef.setValue(UID);
+
                             Intent intent = new Intent(getActivity(), SignInActivity.class);
                             startActivity(intent);
                         }
