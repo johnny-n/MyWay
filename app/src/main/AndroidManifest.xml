@@ -20,9 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignUpActivity" />
+        <activity android:name=".SignUpActivity"
+            android:parentActivityName=".SignInActivity"/>
         <activity android:name=".DirectionsActivity" />
-        <activity android:name=".AddLocationActivity" />
+        <activity android:name=".AddLocationActivity"
+            android:parentActivityName=".DirectionsActivity"/>
 
         <!-- API KEY for Google Places API -->
         <meta-data
