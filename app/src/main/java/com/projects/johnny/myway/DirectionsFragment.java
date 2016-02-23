@@ -6,12 +6,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.firebase.client.Firebase;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -57,6 +59,13 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_directions, container, false);
         locations = MyLocationStorage.get(getActivity()).getLocations();
+
+        // Get reference to Firebase
+        App app = (App) getActivity().getApplicationContext();
+        String UID = app.getUID();
+        Firebase.setAndroidContext(getActivity());
+        Firebase mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID);
+        mFirebaseRef.child("Locations");
 
         // Create instance of GoogleAPIClient
         if (mGoogleApiClient == null) {
@@ -122,11 +131,11 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         switch (item.getItemId()) {
             case R.id.ic_menu_refresh:
                 mRecyclerView.getAdapter().notifyDataSetChanged();
-                break;
+                return true;
             case R.id.ic_add_location:
                 Intent intent = new Intent(getActivity(), AddLocationActivity.class);
                 startActivity(intent);
-                break;
+                return true;
             default:
                 break;
         }

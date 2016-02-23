@@ -100,6 +100,10 @@ public class SignUpFragment extends Fragment {
 
                             String UID = (String) result.get("uid");
                             mFirebaseRef.setValue(UID);
+                            Firebase mFirebaseRefChild = mFirebaseRef.child(UID);
+                            mFirebaseRefChild = mFirebaseRefChild.child("Name");
+                            mFirebaseRefChild.child("FirstName").setValue(mFirstName.getText().toString());
+                            mFirebaseRefChild.child("LastName").setValue(mLastName.getText().toString());
 
                             Intent intent = new Intent(getActivity(), SignInActivity.class);
                             startActivity(intent);

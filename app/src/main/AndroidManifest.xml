@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -24,7 +25,11 @@
             android:parentActivityName=".SignInActivity"/>
         <activity android:name=".DirectionsActivity" />
         <activity android:name=".AddLocationActivity"
-            android:parentActivityName=".DirectionsActivity"/>
+            android:parentActivityName=".DirectionsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DirectionsActivity"/>
+        </activity>
 
         <!-- API KEY for Google Places API -->
         <meta-data

@@ -1,5 +1,6 @@
 package com.projects.johnny.myway;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 /**
@@ -9,5 +10,10 @@ public class SignInActivity extends SingleFragmentActivity {
     @Override
     protected Fragment createFragment() {
         return new SignInFragment();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 }

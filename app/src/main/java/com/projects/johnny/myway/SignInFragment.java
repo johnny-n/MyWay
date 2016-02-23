@@ -35,6 +35,7 @@ public class SignInFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_sign_in, container, false);
 
+        // Get reference to Firebase
         Firebase.setAndroidContext(getActivity());
         final Firebase mFirebaseRef = new Firebase("https://myways.firebaseIO.com/");
 
@@ -76,11 +77,11 @@ public class SignInFragment extends Fragment {
                     mFirebaseRef.authWithPassword(email, password, new Firebase.AuthResultHandler() {
                         @Override
                         public void onAuthenticated(AuthData authData) {
-                            // Pass user UID inside Bundle to next activity
+                            // Use App class for session storage of UID
                             String UID = authData.getUid();
+                            App app = (App) getActivity().getApplicationContext();
+                            app.setUID(UID);
                             Intent intent = new Intent(getActivity(), DirectionsActivity.class);
-                            Bundle args = new Bundle();
-                            args.putSerializable(USER_UID_KEY, UID);
                             startActivity(intent);
                         }
 
