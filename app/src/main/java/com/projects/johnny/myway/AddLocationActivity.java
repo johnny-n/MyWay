@@ -22,25 +22,21 @@ public class AddLocationActivity extends AppCompatActivity {
     private final boolean BUTTON_ENABLED = true;
     private final boolean BUTTON_DISABLED = false;
 
+    private MyLocationStorage mLocationStorage;
+    private String locationAddress = "";
+    private EditText mNicknameEditText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_location);
+        mLocationStorage = MyLocationStorage.get(this);
 
-        // Set up Firebase in Android
-        // Must be initialized once with an Android context
-        Firebase.setAndroidContext(this);
-        final Firebase myFirebaseRef = new Firebase("https://myways.firebaseio.com/");
+        mNicknameEditText = (EditText) findViewById(R.id.add_location_nickname_edit_text);
 
-        // Get reference to button and have it initally disabled
+        // Get reference to button and have it initially disabled
         final Button mConfirmAddPlaceButton = (Button) findViewById(R.id.confirm_add_place_button);
         mConfirmAddPlaceButton.setEnabled(BUTTON_DISABLED);
-        mConfirmAddPlaceButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: Add place to saved
-            }
-        });
 
         // Obtain FragmentManager
         android.app.FragmentManager fm = getFragmentManager();
@@ -51,8 +47,8 @@ public class AddLocationActivity extends AppCompatActivity {
         mPlaceAutocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                Log.i("Location found", "Place: " + place.getAddress());
+                // Obtain address from place selected
+                locationAddress = place.getAddress().toString();
                 // Enable button after selecting a place
                 mConfirmAddPlaceButton.setEnabled(BUTTON_ENABLED);
             }
@@ -64,6 +60,22 @@ public class AddLocationActivity extends AppCompatActivity {
             }
         });
 
+        // Set listener for button
+        mConfirmAddPlaceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Add location to storage with or without nickname, depending
+                //  on what the user wants.
+                if (mNicknameEditText.getText().length() > 0) {
+                    String nickname = mNicknameEditText.getText().toString();
+                    mLocationStorage.addLocation(new MyLocation(nickname, locationAddress));
+                } else {
+                    mLocationStorage.addLocation(new MyLocation(locationAddress));
+                }
+                Intent intent = new Intent(getApplicationContext(), DirectionsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         mPlaceAutocompleteFragment.setHint("Search Places");
     }

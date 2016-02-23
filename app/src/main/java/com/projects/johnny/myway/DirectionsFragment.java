@@ -2,6 +2,7 @@ package com.projects.johnny.myway;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +35,8 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.TravelMode;
 
+import java.util.List;
+
 public class DirectionsFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     // An instance of GeoApiContext is required to use Google Maps API
@@ -46,22 +50,24 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     private Double lng;
 
     private RecyclerView mRecyclerView;
+    private List<MyLocation> locations;
 
-    MyLocation[] locations = {
-            new MyLocation("Home", "50 Washington Street, Santa Clara, CA"),
-            new MyLocation("School", "San Jose State University, San Jose, CA"),
-            new MyLocation("Parents", "2641 Quail Dr, Union City, CA"),
-            new MyLocation("Work", "2089 El Camino Real, Santa Clara, CA"),
-            new MyLocation("Target",  "533 Coleman Ave, San Jose, CA"),
-            new MyLocation("Trader Joes", "Coleman Ave, San Jose, CA"),
-            new MyLocation("Japantown", "618 N 3rd St, San Jose, CA"),
-            new MyLocation("Henry's House", "Alexis Circle, Daly City, CA")
-    };
+//    MyLocation[] locations = {
+//            new MyLocation("Home", "50 Washington Street, Santa Clara, CA"),
+//            new MyLocation("School", "San Jose State University, San Jose, CA"),
+//            new MyLocation("Parents", "2641 Quail Dr, Union City, CA"),
+//            new MyLocation("Work", "2089 El Camino Real, Santa Clara, CA"),
+//            new MyLocation("Target",  "533 Coleman Ave, San Jose, CA"),
+//            new MyLocation("Trader Joes", "Coleman Ave, San Jose, CA"),
+//            new MyLocation("Japantown", "618 N 3rd St, San Jose, CA"),
+//            new MyLocation("Henry's House", "Alexis Circle, Daly City, CA")
+//    };
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_directions, container, false);
+        locations = MyLocationStorage.get(getActivity()).getLocations();
 
         // Create instance of GoogleAPIClient
         if (mGoogleApiClient == null) {
@@ -122,6 +128,22 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         inflater.inflate(R.menu.directions_menu, menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.ic_menu_refresh:
+                mRecyclerView.getAdapter().notifyDataSetChanged();
+                break;
+            case R.id.ic_add_location:
+                Intent intent = new Intent(getActivity(), AddLocationActivity.class);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     // ViewHolder for a each location in list item
     private class DirectionItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -174,12 +196,12 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
         @Override
         public void onBindViewHolder(DirectionItemViewHolder holder, int position) {
-            holder.setListItems(locations[position]);
+            holder.setListItems(locations.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return locations.length;
+            return locations.size();
         }
     }
 

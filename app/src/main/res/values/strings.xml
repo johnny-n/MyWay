@@ -22,4 +22,6 @@
     <string name="sign_in_button">Sign in</string>
     <string name="sign_up_for_account_text_view">Don\'t have an account? Sign up now!</string>
 
+    <string name="add_location_nickname_edit_text">Nickname This Place (Optional)</string>
+
 </resources>

@@ -27,6 +27,17 @@ public class MyLocationStorage {
         mLocations.add(myLocation);
     }
 
+    public void deleteLocation(UUID uuid) {
+        if (mLocations.size() > 0) {
+            for (int i = 0; i < mLocations.size(); i++) {
+                if (mLocations.get(i).uuid().equals(uuid)) {
+                    mLocations.remove(i);
+                    return;
+                }
+            }
+        }
+    }
+
     private MyLocationStorage(Context context) {
         mLocations = new ArrayList<>();
     }

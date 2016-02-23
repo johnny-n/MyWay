@@ -33,11 +33,11 @@
 
         <!-- Background set to null to remove underline -->
         <EditText
-            android:hint="Nickname This Place (Optional)"
+            android:id="@+id/add_location_nickname_edit_text"
+            android:hint="@string/add_location_nickname_edit_text"
             android:background="@null"
             android:textAlignment="center"
             android:textSize="20sp"
-            android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_below="@+id/view"
