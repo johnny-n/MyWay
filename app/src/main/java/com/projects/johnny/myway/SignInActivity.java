@@ -1,5 +1,6 @@
 package com.projects.johnny.myway;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -15,5 +16,11 @@ public class SignInActivity extends SingleFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Automatically sign in if session UID not null
+        App app = (App) getApplicationContext();
+        if (app.getUID() != null) {
+            Intent intent = new Intent(this, DirectionsActivity.class);
+        }
     }
 }

@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -17,6 +18,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,7 +30,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -52,6 +57,9 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     // An instance of GeoApiContext is required to use Google Maps API
     final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyAXSGlwghZsgIFWY2PIBYeyAD-Opq0pP2g");
 
+    // Used as a placeholder in Firebase.
+    // We overwrite this in Firebase to activite the listener for updates
+    private static final String FIREBASE_REFRESH_PLACEHOLDER = "REFRESH";
     private static final int LOCATION_REQUEST_CODE = 2;
 
     private GoogleApiClient mGoogleApiClient;
@@ -60,6 +68,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     private Double lng;
 
     private RecyclerView mRecyclerView;
+    private DirectionAdapter mDirectionAdapter;
     private ArrayList<MyLocation> locations;
     private Firebase mFirebaseRef;
 
@@ -75,18 +84,23 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         Firebase.setAndroidContext(getActivity());
         mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID);
 
-        // Add single event listenere to get snapshot of data
+        mFirebaseRef.child("Locations").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                updateLocationsWithDataSnapshot(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+        // Single value event needed for initialization
         mFirebaseRef.child("Locations").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Obtain location data as Map object and iterate through, adding to locations variable
-                Map<String, String> mLocations = (Map<String, String>) dataSnapshot.getValue();
-                Iterator it = mLocations.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry pair = (Map.Entry) it.next();
-                    MyLocation location = new MyLocation(pair.getKey().toString(), pair.getValue().toString());
-                    locations.add(location);
-                }
+                updateLocationsWithDataSnapshot(dataSnapshot);
             }
 
             @Override
@@ -113,6 +127,9 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
             ActivityCompat.requestPermissions( getActivity(), new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION  }, LOCATION_REQUEST_CODE );
             Log.i("Location Check", "Completed");
         }
+
+        System.out.println("Location is..." + isLocationEnabled(getContext()));
+
         // Get last known location after performing explicit permission check
         // TODO: Fix bug where app crashes when device's location setting is turned off
         final Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -120,13 +137,66 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         lat = location.getLatitude();
         lng = location.getLongitude();
 
+        mDirectionAdapter = new DirectionAdapter(locations);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(new DirectionAdapter(locations));
+        mRecyclerView.setAdapter(mDirectionAdapter);
+
+        // TODO: Have locations displayed when activity starts
+        // locations only display AFTER refresh icon is clicked (??)
+        updateUI();
 
         return v;
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        updateUI();
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+
+    private void updateUI() {
+        mFirebaseRef.child("Locations").child(FIREBASE_REFRESH_PLACEHOLDER).setValue("Refresh");
+        mDirectionAdapter.updateLocations(locations);
+        mDirectionAdapter.notifyDataSetChanged();
+    }
+
+    // Updates our list of locations stored in the fragment
+    private void updateLocationsWithDataSnapshot(DataSnapshot dataSnapshot) {
+        // Obtain location data as Map object and iterate through, adding to locations variable
+        locations = new ArrayList<>();
+        Map<String, String> mLocations = (Map<String, String>) dataSnapshot.getValue();
+        Iterator it = mLocations.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            MyLocation location = new MyLocation(pair.getKey().toString(), pair.getValue().toString());
+            if (!pair.getKey().toString().equals(FIREBASE_REFRESH_PLACEHOLDER)) {
+                locations.add(location);
+            }
+        }
+    }
+
+    // Returns true/false depending on whether locations is turned on or off.
+    private static boolean isLocationEnabled(Context context) {
+        int locationMode = 0;
+        String locationProviders;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+
+        }else{
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
+        }
+    }
 
     @Override
     public void onStart() {
@@ -158,16 +228,18 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ic_menu_refresh:
-                // TODO: Refresh/update traffic times
-                mFirebaseRef.child("Locations").removeEventListener(retrieveDataListener());
-                mFirebaseRef.child("Locations").addValueEventListener(retrieveDataListener());
-                mRecyclerView.setAdapter(new DirectionAdapter(locations));
-                mRecyclerView.getAdapter().notifyDataSetChanged();
+                Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_SHORT).show();
+                updateUI();
                 return true;
             case R.id.ic_add_location:
-                Intent intent = new Intent(getActivity(), AddLocationActivity.class);
-                startActivity(intent);
+                Intent addLocationIntent = new Intent(getActivity(), AddLocationActivity.class);
+                startActivity(addLocationIntent);
                 return true;
+            case R.id.ic_sign_out:
+                App app = (App) getActivity().getApplicationContext();
+                app.setUID(null);
+                Intent signOutIntent = new Intent(getActivity(), SignInActivity.class);
+                startActivity(signOutIntent);
             default:
                 break;
         }
@@ -234,6 +306,10 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
             mLocations = locations;
         }
 
+        public void updateLocations(ArrayList<MyLocation> locations) {
+            mLocations = locations;
+        }
+
         @Override
         public DirectionItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
@@ -243,39 +319,15 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
         @Override
         public void onBindViewHolder(DirectionItemViewHolder holder, int position) {
-            holder.setListItems(locations.get(position));
+            holder.setListItems(mLocations.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return locations.size();
+            return mLocations.size();
         }
-
-
     }
 
-    private ValueEventListener retrieveDataListener() {
-        return new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, String> mLocations = (Map<String, String>) dataSnapshot.getValue();
-                Iterator it = mLocations.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry pair = (Map.Entry) it.next();
-                    locations = new ArrayList<>();
-                    MyLocation location = new MyLocation(pair.getKey().toString(), pair.getValue().toString());
-                    Log.d("Name", pair.getKey().toString());
-                    Log.d("Address", pair.getValue().toString());
-                    locations.add(location);
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        };
-    }
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.d("GoogleApiClient", "Successfully connected to GoogleApiClient!");

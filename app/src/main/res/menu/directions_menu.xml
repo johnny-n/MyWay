@@ -12,5 +12,10 @@
           android:icon="@drawable/ic_menu_refresh"
           app:showAsAction="ifRoom"/>
 
+    <item android:id="@+id/ic_sign_out"
+          android:title="Sign out"
+          app:showAsAction="collapseActionView"/>
+
+
 </menu>
 
