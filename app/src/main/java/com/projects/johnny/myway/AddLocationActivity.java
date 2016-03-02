@@ -61,7 +61,7 @@ public class AddLocationActivity extends AppCompatActivity {
 
             @Override
             public void onError(Status status) {
-                // TODO: Handle the error.
+                // TODO: Notify user of error and show visual notification
                 Log.i("Unable to find location", "An error occurred: " + status);
             }
         });

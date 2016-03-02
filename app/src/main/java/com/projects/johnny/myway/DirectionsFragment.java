@@ -84,23 +84,12 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         Firebase.setAndroidContext(getActivity());
         mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID);
 
+        // Add listener to update recycler view every time Firebase is updated
         mFirebaseRef.child("Locations").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 updateLocationsWithDataSnapshot(dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
-
-        // Single value event needed for initialization
-        mFirebaseRef.child("Locations").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                updateLocationsWithDataSnapshot(dataSnapshot);
+                updateUI();
             }
 
             @Override
@@ -130,21 +119,20 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
         System.out.println("Location is..." + isLocationEnabled(getContext()));
 
-        // Get last known location after performing explicit permission check
-        // TODO: Fix bug where app crashes when device's location setting is turned off
-        final Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        // Get latitude and longitude of last known location
-        lat = location.getLatitude();
-        lng = location.getLongitude();
+        if (isLocationEnabled(getContext())) {
+            // Get last known location after performing explicit permission check
+            // TODO: Fix bug where app crashes when device's location setting is turned off
+            final Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            // Get latitude and longitude of last known location
+            lat = location.getLatitude();
+            lng = location.getLongitude();
+        }
 
         mDirectionAdapter = new DirectionAdapter(locations);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mDirectionAdapter);
 
-        // TODO: Have locations displayed when activity starts
-        // locations only display AFTER refresh icon is clicked (??)
-        updateUI();
 
         return v;
     }
@@ -154,7 +142,6 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         updateUI();
         super.onViewCreated(view, savedInstanceState);
     }
-
 
     private void updateUI() {
         mFirebaseRef.child("Locations").child(FIREBASE_REFRESH_PLACEHOLDER).setValue("Refresh");
@@ -192,7 +179,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
             return locationMode != Settings.Secure.LOCATION_MODE_OFF;
 
-        }else{
+        } else{
             locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             return !TextUtils.isEmpty(locationProviders);
         }

@@ -63,7 +63,7 @@ public class SignInFragment extends Fragment {
         mSignUpAccountTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Complete sign up link (use startActivityForResult())
+                // TODO: Automatically log user in after creating account
                 Intent intent = new Intent(getActivity(), SignUpActivity.class);
                 startActivity(intent);
             }
