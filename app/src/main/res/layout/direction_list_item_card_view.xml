@@ -57,6 +57,7 @@
                 android:layout_height="wrap_content"/>
 
             <ImageView
+                android:id="@+id/display_address_icon"
                 android:src="@android:drawable/ic_menu_info_details"
                 android:layout_marginRight="100dp"
                 android:layout_gravity="right|bottom"

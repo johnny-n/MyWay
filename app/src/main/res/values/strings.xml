@@ -24,5 +24,6 @@
 
     <string name="add_location_nickname_edit_text">Nickname This Place (Optional)</string>
     <string name="locations_setting_notify">Please turn on your locations settings</string>
+    <string name="address_dialog_title">Full address:</string>
 
 </resources>

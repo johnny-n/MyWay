@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +30,7 @@ import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,7 +62,9 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     // Used as a placeholder in Firebase.
     // We overwrite this in Firebase to activite the listener for updates
     private static final String FIREBASE_REFRESH_PLACEHOLDER = "REFRESH";
+    private static final String DIALOG_ADDRESS = "dialog_address";
     private static final int LOCATION_REQUEST_CODE = 2;
+    private static final int REQUEST_ADDRESS = 3;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -240,6 +244,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         TextView mAddress;
         TextView mTravelTimeTextView;
         Button mNavigatorButton;
+        ImageView mDisplayAddressIcon;
 
         public DirectionItemViewHolder(View itemView) {
             super(itemView);
@@ -247,6 +252,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
             mTravelTimeTextView = (TextView) itemView.findViewById(R.id.travel_time_item_text_view);
             mNavigatorButton = (Button) itemView.findViewById(R.id.navigator_item_button);
             mNavigatorButton.playSoundEffect(SoundEffectConstants.CLICK);
+            mDisplayAddressIcon = (ImageView) itemView.findViewById(R.id.display_address_icon);
         }
 
         public void setListItems(MyLocation myLocation) {
@@ -281,6 +287,15 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");
                     startActivity(mapIntent);
+                }
+            });
+
+            mDisplayAddressIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentManager fm = getFragmentManager();
+                    AddressDialogFragment addressDialogFragment = AddressDialogFragment.newInstance(locationAddress);
+                    addressDialogFragment.show(fm, DIALOG_ADDRESS);
                 }
             });
         }
