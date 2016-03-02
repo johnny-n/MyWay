@@ -121,11 +121,12 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
         if (isLocationEnabled(getContext())) {
             // Get last known location after performing explicit permission check
-            // TODO: Fix bug where app crashes when device's location setting is turned off
             final Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             // Get latitude and longitude of last known location
             lat = location.getLatitude();
             lng = location.getLongitude();
+        } else {
+            Toast.makeText(getActivity(), R.string.locations_setting_notify, Toast.LENGTH_LONG);
         }
 
         mDirectionAdapter = new DirectionAdapter(locations);

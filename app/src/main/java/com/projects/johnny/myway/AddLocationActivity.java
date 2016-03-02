@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.google.android.gms.common.api.Status;
@@ -61,7 +62,6 @@ public class AddLocationActivity extends AppCompatActivity {
 
             @Override
             public void onError(Status status) {
-                // TODO: Notify user of error and show visual notification
                 Log.i("Unable to find location", "An error occurred: " + status);
             }
         });
@@ -87,6 +87,7 @@ public class AddLocationActivity extends AppCompatActivity {
 
         mPlaceAutocompleteFragment.setHint("Search Places");
 
+        // For UP navigation button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
