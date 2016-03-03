@@ -37,7 +37,6 @@ public class AddressDialogFragment extends DialogFragment {
         return new AlertDialog.Builder(getActivity())
                 .setView(v)
                 .setTitle(R.string.address_dialog_title)
-                .setPositiveButton(android.R.string.ok, null)
                 .create();
     }
 }
