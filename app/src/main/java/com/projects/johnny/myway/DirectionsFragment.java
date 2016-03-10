@@ -138,7 +138,6 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mDirectionAdapter);
 
-
         return v;
     }
 
@@ -253,7 +252,6 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
             mNavigatorButton = (Button) itemView.findViewById(R.id.navigator_item_button);
             mNavigatorButton.playSoundEffect(SoundEffectConstants.CLICK);
             mDisplayAddressIcon = (ImageView) itemView.findViewById(R.id.display_address_icon);
-
         }
 
         public void setListItems(MyLocation myLocation) {
