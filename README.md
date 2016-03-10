@@ -5,7 +5,8 @@ Avoid unexpected traffic with quick access to travel times for any place.
 Multiple travel times can be obtained at once from any location.
 
 
-![alt text](screenshots/sign_in_screen.png "Description")
+<img src=screenshots/login_screen.png width=600 height=100 />
+![alt text](screenshots/login_screen.png "Description" )
 ![alt text](screenshots/sign_up_screen.png "Description")
 
 Here is the heart of the application. You can see the traffic times for all of the places from your location in real time.
