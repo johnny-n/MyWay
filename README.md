@@ -1,5 +1,7 @@
 # MyWay
 
+Published on the Google Play store: https://play.google.com/store/apps/details?id=com.projects.johnny.myway
+
 Productive application for commuters who prioritize their time.
 Avoid unexpected traffic with quick access to travel times for any place.
 Multiple travel times can be obtained at once from any location.
