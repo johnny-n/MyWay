@@ -1,6 +1,8 @@
 # MyWay
 
-Productive application for commuters who prioritize their time.
+Published on the Google Play store: https://play.google.com/store/apps/details?id=com.projects.johnny.myway
+
+Productivity app for commuters who prioritize their time.
 Avoid unexpected traffic with quick access to travel times for any place.
 Multiple travel times can be obtained at once from any location.
 
@@ -8,7 +10,7 @@ The app is connected to Firebase, which makes it simple and easy for account reg
 
 <img src=screenshots/login_screen.png width=300 height=500 /> <img src=screenshots/sign_up_screen.png width=300 height=500 />
 
-The heart of the application. You can see the traffic times for all of the places from your location in real time.
+The heart of the application. You can see the traffic times to all of the places from your location in real time.
 
 <img src=screenshots/locations_screen.png width=300 height=500 />
 <img src=screenshots/view_address_screen.png width=300 height=500 />
