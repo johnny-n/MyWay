@@ -87,6 +87,7 @@ public class SignInFragment extends Fragment {
                             app.setUID(UID);
                             Intent intent = new Intent(getActivity(), DirectionsActivity.class);
                             startActivity(intent);
+                            getActivity().finish();
                         }
 
                         @Override

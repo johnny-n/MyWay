@@ -9,18 +9,17 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,7 +33,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -42,17 +40,14 @@ import com.firebase.client.ValueEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.maps.DirectionsApi;
-import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
-import com.google.maps.model.DirectionsResult;
-import com.google.maps.model.LatLng;
-import com.google.maps.model.TravelMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+
+// TODO: Fix bug where app crash when requesting permissions for accessing location's device for the first time.
 
 public class DirectionsFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -61,10 +56,9 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
     // Used as a placeholder in Firebase.
     // We overwrite this in Firebase to activite the listener for updates
-    private static final String FIREBASE_REFRESH_PLACEHOLDER = "REFRESH";
+    public static final String FIREBASE_REFRESH_PLACEHOLDER = "REFRESH";
     private static final String DIALOG_ADDRESS = "dialog_address";
     private static final int LOCATION_REQUEST_CODE = 2;
-    private static final int REQUEST_ADDRESS = 3;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -73,8 +67,11 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
     private RecyclerView mRecyclerView;
     private DirectionAdapter mDirectionAdapter;
+    private TextView mAddPlaceTextView;
     private ArrayList<MyLocation> locations;
     private Firebase mFirebaseRef;
+
+    private EtaHandlerThread<DirectionItemViewHolder> mEtaHandlerThread;
 
     @Nullable
     @Override
@@ -111,6 +108,14 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                     .build();
         }
 
+        // Goes to activity that notifies user to turn on locations
+        if (!isLocationEnabled(getContext())) {
+            Intent intent = new Intent(getActivity(), RequestLocationActivity.class);
+            intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(intent);
+            getActivity().finish();
+        }
+
         /**
          * Note: You need to explicitly check in code whether location permissions are granted. If they are
          *       not granted, then you need to call Activity.Compat.requestpermissions to request it.
@@ -129,14 +134,40 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
             // Get latitude and longitude of last known location
             lat = location.getLatitude();
             lng = location.getLongitude();
-        } else {
-            Toast.makeText(getActivity(), R.string.locations_setting_notify, Toast.LENGTH_LONG);
+
+            // Set up Handler & HandlerThread to do background task
+            final Handler responseHandler = new Handler();
+            mEtaHandlerThread = new EtaHandlerThread<>(responseHandler, context, lat, lng);
+            mEtaHandlerThread.setEtaInterface(new EtaHandlerThread.EtaInterface() {
+                @Override
+                public void setInformation(DirectionItemViewHolder viewHolder, String travelTime) {
+                    viewHolder.setEtaTime(travelTime);
+                }
+            });
+            mEtaHandlerThread.start();
+            mEtaHandlerThread.getLooper();
+
+            // We set up the adapter if and only if location places are set;
+            mDirectionAdapter = new DirectionAdapter(locations);
+            mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            mRecyclerView.setAdapter(mDirectionAdapter);
+
+            // for touch events on RecyclerView
+            ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mDirectionAdapter, getActivity());
+            ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+            touchHelper.attachToRecyclerView(mRecyclerView);
+
         }
 
-        mDirectionAdapter = new DirectionAdapter(locations);
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(mDirectionAdapter);
+        mAddPlaceTextView = (TextView) v.findViewById(R.id.add_place_text_view);
+        mAddPlaceTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent addLocationIntent = new Intent(getActivity(), AddLocationActivity.class);
+                startActivity(addLocationIntent);
+            }
+        });
 
         return v;
     }
@@ -148,9 +179,20 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     }
 
     private void updateUI() {
-        mFirebaseRef.child("Locations").child(FIREBASE_REFRESH_PLACEHOLDER).setValue("Refresh");
-        mDirectionAdapter.updateLocations(locations);
-        mDirectionAdapter.notifyDataSetChanged();
+        if (isLocationEnabled(getContext())) {
+            mFirebaseRef.child("Locations").child(FIREBASE_REFRESH_PLACEHOLDER).setValue("Refresh");
+            mDirectionAdapter.updateLocations(locations);
+            mDirectionAdapter.notifyDataSetChanged();
+
+            if (mDirectionAdapter.getItemCount() == 0) {
+                Log.i("Item Count", String.valueOf(mDirectionAdapter.getItemCount()));
+                mRecyclerView.setVisibility(View.GONE);
+                mAddPlaceTextView.setVisibility(View.VISIBLE);
+            } else {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mAddPlaceTextView.setVisibility(View.GONE);
+            }
+        }
     }
 
     // Updates our list of locations stored in the fragment
@@ -183,10 +225,22 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
             return locationMode != Settings.Secure.LOCATION_MODE_OFF;
 
-        } else{
+        } else {
             locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             return !TextUtils.isEmpty(locationProviders);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mEtaHandlerThread.quit();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mEtaHandlerThread.clearQueue();
     }
 
     @Override
@@ -238,12 +292,13 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     }
 
     // ViewHolder for a each location in list item
-    private class DirectionItemViewHolder extends RecyclerView.ViewHolder {
+    public class DirectionItemViewHolder extends RecyclerView.ViewHolder {
 
         TextView mAddress;
         TextView mTravelTimeTextView;
         Button mNavigatorButton;
         ImageView mDisplayAddressIcon;
+        String mTitleOfPlace;
 
         public DirectionItemViewHolder(View itemView) {
             super(itemView);
@@ -256,25 +311,8 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
         public void setListItems(MyLocation myLocation) {
             String locationName = myLocation.getNameOfPlace();
+            mTitleOfPlace = locationName;
             final String locationAddress = myLocation.getAddress();
-
-            // Create request for GoogleDirectionsApi
-            // Last known location is set here
-            DirectionsApiRequest directionsApiRequest = DirectionsApi.newRequest(context)
-                    .origin(new LatLng(lat, lng))
-                    .mode(TravelMode.DRIVING);
-
-            directionsApiRequest.destination(locationAddress);
-            DirectionsResult result;
-            try {
-                // Obtain result from api request
-                result = directionsApiRequest.await();
-                // Obtain travel time deep within result
-                String travelTime = result.routes[0].legs[0].duration.humanReadable;
-                mTravelTimeTextView.setText(travelTime);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
             mAddress.setText(locationName);
 
@@ -297,12 +335,18 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                     addressDialogFragment.show(fm, DIALOG_ADDRESS);
                 }
             });
+        }
 
+        public void setEtaTime(String travelTime) {
+            mTravelTimeTextView.setText(travelTime);
+        }
 
+        public String getTitleOfPlace() {
+            return mTitleOfPlace;
         }
     }
 
-    private class DirectionAdapter extends RecyclerView.Adapter<DirectionItemViewHolder> {
+    public class DirectionAdapter extends RecyclerView.Adapter<DirectionItemViewHolder> implements ItemTouchHelperAdapter {
 
         ArrayList<MyLocation> mLocations;
 
@@ -324,11 +368,52 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         @Override
         public void onBindViewHolder(DirectionItemViewHolder holder, int position) {
             holder.setListItems(mLocations.get(position));
+            mEtaHandlerThread.requestEtaTime(holder, mLocations.get(position));
+            if (mDirectionAdapter.getItemCount() == 0) {
+                Log.i("Item Count", String.valueOf(mDirectionAdapter.getItemCount()));
+                mRecyclerView.setVisibility(View.GONE);
+                mAddPlaceTextView.setVisibility(View.VISIBLE);
+            } else {
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mAddPlaceTextView.setVisibility(View.GONE);
+            }
         }
 
         @Override
         public int getItemCount() {
             return mLocations.size();
+        }
+
+        // Determines the movement swipe gestures to detect
+        // You must override getMovementFlags() to specify which directions of drags and swipes are supported.
+        // Use the helper ItemTouchHelper.makeMovementFlags(int, int) to build the returned flags.
+        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+
+            int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+            int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+
+            return ItemTouchHelper.Callback.makeMovementFlags(dragFlags, swipeFlags);
+        }
+
+        @Override
+        public boolean onItemMove(int fromPosition, int toPosition) {
+            if (fromPosition < toPosition) {
+                for (int i = fromPosition; i < toPosition; i++) {
+                    Collections.swap(mLocations, i, i + 1);
+                }
+            } else {
+                for (int i = fromPosition; i > toPosition; i--) {
+                    Collections.swap(mLocations, i, i - 1);
+                }
+            }
+            notifyItemMoved(fromPosition, toPosition);
+            return true;
+        }
+
+        @Override
+        public void onItemDismiss(int position) {
+            mLocations.remove(position);
+            notifyItemRemoved(position);
         }
     }
 

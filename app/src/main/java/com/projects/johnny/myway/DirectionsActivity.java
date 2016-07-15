@@ -15,4 +15,9 @@ public class DirectionsActivity extends SingleFragmentActivity {
     protected Fragment createFragment() {
         return new DirectionsFragment();
     }
+
+    @Override
+    public void onBackPressed() {
+        // Do nothing
+    }
 }

@@ -24,17 +24,21 @@
     </android.support.v7.widget.Toolbar>
 
     <TextView
-        android:id="@+id/add_place_text_view"
         android:textSize="30sp"
-        android:gravity="center_vertical|center_horizontal"
-        android:text="@string/add_place_text_view"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:text="Please turn on your location setting and sign in again."
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_weight="2"
+
+    <Button
+        android:id="@+id/sign_out_button"
+        android:layout_marginTop="30dp"
+        android:text="Sign Out"
+        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"/>
+
 
 </LinearLayout>

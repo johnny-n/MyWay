@@ -25,6 +25,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragment_container);
 
+
         // Always good to use this check because sometimes the †arget fragment might not exist.
         if (fragment == null) {
             fragment = createFragment();

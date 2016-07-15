@@ -26,5 +26,6 @@
     <string name="locations_setting_notify">Please turn on your locations settings</string>
     <string name="address_dialog_title">Full address:</string>
     <string name="require_locations_text_view">*Location setting must be enabled to use this app*</string>
+    <string name="add_place_text_view">Click to add a place</string>
 
 </resources>

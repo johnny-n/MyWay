@@ -18,6 +18,7 @@ public class SignInActivity extends SingleFragmentActivity {
         super.onCreate(savedInstanceState);
 
         // Automatically sign in if session UID not null
+        // This is to automatically log in users right after they sign up for an account.
         App app = (App) getApplicationContext();
         if (app.getUID() != null) {
             Intent intent = new Intent(this, DirectionsActivity.class);

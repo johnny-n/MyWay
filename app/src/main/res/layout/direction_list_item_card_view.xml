@@ -36,7 +36,7 @@
 
             <TextView
                 android:id="@+id/travel_time_item_text_view"
-                android:text="Unable to find travel time"
+                android:text="Loading eta times..."
                 android:layout_margin="5dp"
                 android:textColor="@android:color/holo_green_dark"
                 android:textSize="20sp"
