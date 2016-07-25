@@ -1,6 +1,7 @@
 package com.projects.johnny.myway;
 
 import android.Manifest;
+import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -27,8 +29,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SoundEffectConstants;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,9 +69,13 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     private Double lat;
     private Double lng;
 
+    private FrameLayout mContainer;
+    private TextView mAddPlaceTextView;
+    private FloatingActionButton mFabAddLocation;
+    private boolean mIsFabRotated;
+
     private RecyclerView mRecyclerView;
     private DirectionAdapter mDirectionAdapter;
-    private TextView mAddPlaceTextView;
     private ArrayList<MyLocation> locations;
     private Firebase mFirebaseRef;
 
@@ -160,12 +168,23 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
         }
 
+        mContainer = (FrameLayout) v.findViewById(R.id.container);
+
         mAddPlaceTextView = (TextView) v.findViewById(R.id.add_place_text_view);
         mAddPlaceTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent addLocationIntent = new Intent(getActivity(), AddLocationActivity.class);
+                Intent addLocationIntent = AddLocationActivity.newIntent(getActivity());
                 startActivity(addLocationIntent);
+            }
+        });
+
+        mFabAddLocation = (FloatingActionButton) v.findViewById(R.id.add_location_fab);
+        mIsFabRotated = false;
+        mFabAddLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animateFab();
             }
         });
 
@@ -256,7 +275,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     }
 
     // You must explicitly tell the FragmentManager that your fragment should receive
-    // a call to onCrateOptionsMenu(...) inside onCreate(...)
+    // a call to onCreateOptionsMenu(...) inside onCreate(...)
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -289,6 +308,40 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void animateFab() {
+        float rotation;
+        if (mIsFabRotated) {
+            rotation = 0f;
+        } else {
+            rotation = 225f;
+        }
+        mFabAddLocation.animate()
+                .rotation(rotation)
+                .setDuration(300)
+                .start();
+        mIsFabRotated = !mIsFabRotated;
+    }
+
+    public View.OnClickListener fabOnClickListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Determine center position for circular reveal (fab button)
+                final int x = (v.getRight() - v.getLeft()) / 2;
+                final int y = (v.getBottom() - v.getTop()) / 2;
+
+                // Determine radius sizes
+                final int containerWidth = mContainer.getWidth();
+                final int containerHeight = mContainer.getHeight();
+
+                final float startingRadius = 0;
+                final float maxRadius = (float) Math.sqrt((containerWidth * containerWidth) + (containerHeight * containerHeight));
+
+                final Animator animator = ViewAnimationUtils.createCircularReveal(v, x, y, startingRadius, maxRadius);
+            }
+        };
     }
 
     // ViewHolder for a each location in list item

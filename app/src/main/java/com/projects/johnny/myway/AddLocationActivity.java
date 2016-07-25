@@ -1,5 +1,6 @@
 package com.projects.johnny.myway;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -21,6 +22,10 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
  * Created by Johnny on 2/9/16.
  */
 public class AddLocationActivity extends AppCompatActivity {
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, AddLocationActivity.class);
+    }
 
     private final boolean BUTTON_ENABLED = true;
     private final boolean BUTTON_DISABLED = false;
