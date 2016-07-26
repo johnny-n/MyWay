@@ -121,7 +121,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         }
 
         // Goes to activity that notifies user to turn on locations
-        if (!isLocationEnabled(getContext())) {
+        if (!isLocationEnabled(getActivity())) {
             Intent intent = new Intent(getActivity(), RequestLocationActivity.class);
             intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(intent);
@@ -132,11 +132,11 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
          * Note: You need to explicitly check in code whether location permissions are granted. If they are
          *       not granted, then you need to call Activity.Compat.requestpermissions to request it.
          */
-        LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
-        System.out.println("Location is..." + isLocationEnabled(getContext()));
+        System.out.println("Location is..." + isLocationEnabled(getActivity()));
 
-        if (isLocationEnabled(getContext())) {
+        if (isLocationEnabled(getActivity())) {
             // Get last known location after performing explicit permission check
             final Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             // Get latitude and longitude of last known location
@@ -187,7 +187,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     }
 
     private void updateUI() {
-        if (isLocationEnabled(getContext())) {
+        if (isLocationEnabled(getActivity())) {
             mFirebaseRef.child("Locations").child(FIREBASE_REFRESH_PLACEHOLDER).setValue("Refresh");
             mDirectionAdapter.updateLocations(locations);
             mDirectionAdapter.notifyDataSetChanged();
@@ -283,10 +283,6 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
             case R.id.ic_menu_refresh:
                 Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_SHORT).show();
                 updateUI();
-                return true;
-            case R.id.ic_add_location:
-                Intent addLocationIntent = new Intent(getActivity(), AddLocationActivity.class);
-                startActivity(addLocationIntent);
                 return true;
             case R.id.ic_sign_out:
                 App app = (App) getActivity().getApplicationContext();

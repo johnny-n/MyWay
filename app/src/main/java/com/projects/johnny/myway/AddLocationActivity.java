@@ -29,7 +29,7 @@ import io.codetail.widget.RevealLinearLayout;
  */
 public class AddLocationActivity extends AppCompatActivity {
 
-    // TODO: Fix bug when adding location
+    // TODO: Change AddLocationActivity into AddLocationFragment
 
     public static Intent newIntent(Context context) {
         return new Intent(context, AddLocationActivity.class);

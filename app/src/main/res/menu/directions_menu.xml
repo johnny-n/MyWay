@@ -2,20 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/ic_add_location"
-          android:title="add_location"
-          android:icon="@drawable/ic_add_location"
-          app:showAsAction="ifRoom"/>
-
     <item android:id="@+id/ic_menu_refresh"
-          android:title="refresh_list"
+          android:title="Refresh list"
           android:icon="@drawable/ic_menu_refresh"
-          app:showAsAction="ifRoom"/>
+          app:showAsAction="ifRoom|withText"/>
 
     <item android:id="@+id/ic_sign_out"
           android:title="Sign out"
           app:showAsAction="collapseActionView"/>
-
 
 </menu>
 
