@@ -1,18 +1,17 @@
 package com.projects.johnny.myway;
 
 import android.animation.Animator;
-import android.content.Context;
-import android.content.Intent;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.google.android.gms.common.api.Status;
@@ -22,64 +21,63 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
 import io.codetail.animation.ViewAnimationUtils;
 import io.codetail.widget.RevealFrameLayout;
-import io.codetail.widget.RevealLinearLayout;
 
-/**
- * Created by Johnny on 2/9/16.
- */
-public class AddLocationActivity extends AppCompatActivity {
+public class AddLocationFragment extends Fragment {
 
-    // TODO: Change AddLocationActivity into AddLocationFragment.
-    // TODO: Gray out button when disabled.
+    private static final String TAG = "AddLocationFragment";
 
-    public static Intent newIntent(Context context) {
-        return new Intent(context, AddLocationActivity.class);
+    public static AddLocationFragment newInstance() {
+        return new AddLocationFragment();
     }
-
-    private final boolean BUTTON_ENABLED = true;
-    private final boolean BUTTON_DISABLED = false;
 
     private String locationAddress = "";
     private EditText mNicknameEditText;
-    private Button mConfirmAddPlaceButton;
 
     private RevealFrameLayout mContainer;
     private FrameLayout mCircularRevealView;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_location);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_add_location, container, false);
 
-        mNicknameEditText = (EditText) findViewById(R.id.add_location_nickname_edit_text);
+        mNicknameEditText = (EditText) v.findViewById(R.id.add_location_nickname_edit_text);
 
         // Firebase
-        App app = (App) getApplicationContext();
+        App app = (App) getActivity().getApplicationContext();
         String UID = app.getUID();
-        Firebase.setAndroidContext(this);
+        Firebase.setAndroidContext(getActivity().getApplicationContext());
         final Firebase mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID).child("Locations");
 
         // Get reference to button and have it initially disabled
-        mConfirmAddPlaceButton = (Button) findViewById(R.id.confirm_add_place_button);
-        mConfirmAddPlaceButton.setEnabled(BUTTON_DISABLED);
+        final Button mConfirmAddPlaceButton = (Button) v.findViewById(R.id.confirm_add_place_button);
+        mConfirmAddPlaceButton.setEnabled(false);
 
-        // Obtain FragmentManager
-        android.app.FragmentManager fm = getFragmentManager();
+        // Because we are inside a fragment and we want to obtain a fragment,
+        // we have to use the childFragmentManager.
+        final FragmentManager fm = getChildFragmentManager();
+
         // Get reference to PlaceAutocomplete UI widget
         final PlaceAutocompleteFragment mPlaceAutocompleteFragment = (PlaceAutocompleteFragment) fm.findFragmentById(R.id.place_autocomplete_fragment);
+
         // Set listener for autocomplete widget
         mPlaceAutocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+
             @Override
             public void onPlaceSelected(Place place) {
                 // Obtain address from place selected
-                locationAddress = place.getAddress().toString();
+                String locationAddress = place.getAddress().toString();
+
+                Log.d(TAG, "OnPlaceSelected " + locationAddress);
+
+                mPlaceAutocompleteFragment.setText(locationAddress);
                 // Enable button after selecting a place
-                mConfirmAddPlaceButton.setEnabled(BUTTON_ENABLED);
+                mConfirmAddPlaceButton.setEnabled(true);
             }
 
             @Override
             public void onError(Status status) {
-                Log.i("Unable to find location", "An error occurred: " + status);
+                Log.i(TAG, "An error occurred: " + status);
             }
         });
 
@@ -97,21 +95,24 @@ public class AddLocationActivity extends AppCompatActivity {
                     nickname = locationAddress;
                     mFirebaseRef.child(nickname).setValue(locationAddress);
                 }
-                Intent intent = new Intent(getApplicationContext(), DirectionsActivity.class);
-                startActivity(intent);
+
+                // Return to previous fragment
+                Fragment fragment = DirectionsFragment.newInstance();
+                fm.beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .commit();
             }
         });
 
         mPlaceAutocompleteFragment.setHint("Search Places");
 
         // For UP navigation button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // Animation stuff
-        mContainer = (RevealFrameLayout) findViewById(R.id.add_location_container);
-        mCircularRevealView = (FrameLayout) findViewById(R.id.add_location_circular_reveal_view);
-
+        mContainer = (RevealFrameLayout) v.findViewById(R.id.add_location_container);
+        mCircularRevealView = (FrameLayout) v.findViewById(R.id.add_location_circular_reveal_view);
 
         // Animate circular reveal
         mContainer.post(new Runnable() {
@@ -155,15 +156,7 @@ public class AddLocationActivity extends AppCompatActivity {
                 animator.start();
             }
         });
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return v;
     }
 }

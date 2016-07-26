@@ -17,7 +17,7 @@
 
 
         <TextView
-            android:text="Address"
+            android:text="Address (Required)"
             android:textColor="@android:color/black"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="40dp"
@@ -43,7 +43,7 @@
         </android.support.v7.widget.CardView>
 
         <TextView
-            android:text="Name"
+            android:text="Name (Optional)"
             android:textColor="@android:color/black"
             android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
@@ -93,7 +93,6 @@
     <FrameLayout
         android:id="@+id/add_location_circular_reveal_view"
         android:background="@color/colorAccent"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

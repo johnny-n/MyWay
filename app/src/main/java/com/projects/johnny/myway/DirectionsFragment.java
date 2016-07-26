@@ -1,10 +1,10 @@
 package com.projects.johnny.myway;
 
-import android.Manifest;
 import android.animation.Animator;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -14,10 +14,6 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -30,7 +26,6 @@ import android.view.MenuItem;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -66,6 +61,10 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     public static final String FIREBASE_REFRESH_PLACEHOLDER = "REFRESH";
     private static final String DIALOG_ADDRESS = "dialog_address";
     private static final int LOCATION_REQUEST_CODE = 2;
+
+    public static DirectionsFragment newInstance() {
+        return new DirectionsFragment();
+    }
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -263,6 +262,12 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         super.onStop();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mCircularRevealView.setVisibility(View.INVISIBLE);
+    }
+
     // You must explicitly tell the FragmentManager that your fragment should receive
     // a call to onCreateOptionsMenu(...) inside onCreate(...)
     @Override
@@ -339,15 +344,17 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                 animator.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-
                     }
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        Intent intent = AddLocationActivity.newIntent(getActivity());
-                        startActivity(intent);
+                        final FragmentManager fm = getFragmentManager();
+                        Fragment fragment = AddLocationFragment.newInstance();
+                        fm.beginTransaction()
+                                .replace(R.id.fragment_container, fragment)
+                                .addToBackStack(null)
+                                .commit();
                         // This view will still be visible if user presses the back button, but not the up button.
-                        mCircularRevealView.setVisibility(View.INVISIBLE);
                         mFabAddLocation.setEnabled(true);
                     }
 
@@ -406,7 +413,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
             mDisplayAddressIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FragmentManager fm = getFragmentManager();
+                    final FragmentManager fm = getFragmentManager();
                     AddressDialogFragment addressDialogFragment = AddressDialogFragment.newInstance(locationAddress);
                     addressDialogFragment.show(fm, DIALOG_ADDRESS);
                 }

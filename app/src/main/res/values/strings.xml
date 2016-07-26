@@ -21,7 +21,7 @@
     <string name="sign_in_button">Sign in</string>
     <string name="sign_up_button">Sign up</string>
 
-    <string name="add_location_nickname_edit_text">Nickname This Place (Optional)</string>
+    <string name="add_location_nickname_edit_text">Nickname</string>
     <string name="locations_setting_notify">Please turn on your locations settings</string>
     <string name="address_dialog_title">Full address:</string>
     <string name="require_locations_text_view">*Location setting must be enabled to use this app*</string>

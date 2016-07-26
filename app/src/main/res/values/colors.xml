@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#00bad2</color>
-    <color name="colorPrimaryDark">#00a3b8</color>
+    <color name="colorPrimary">#00BAD2</color>
+    <color name="colorPrimaryDark">#00A3B8</color>
     <color name="colorAccent">#3F51B5</color>
 
     <color name="white">@android:color/white</color>
@@ -10,6 +10,4 @@
     <color name="signUpBackground">#E6E6E6</color>
     <color name="navigatorColor">@android:color/holo_blue_light</color>
     <color name="navigatorColorPressed">@android:color/holo_blue_dark</color>
-
-
 </resources>
