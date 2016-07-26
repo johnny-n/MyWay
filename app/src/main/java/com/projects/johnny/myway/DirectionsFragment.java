@@ -29,8 +29,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SoundEffectConstants;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -51,6 +51,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
+import io.codetail.animation.ViewAnimationUtils;
+import io.codetail.widget.RevealFrameLayout;
+
 // TODO: Fix bug where app crash when requesting permissions for accessing location's device for the first time.
 
 public class DirectionsFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -69,7 +72,8 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     private Double lat;
     private Double lng;
 
-    private FrameLayout mContainer;
+    private RevealFrameLayout mContainer;
+    private FrameLayout mCircularRevealView;
     private TextView mAddPlaceTextView;
     private FloatingActionButton mFabAddLocation;
     private boolean mIsFabRotated;
@@ -168,7 +172,8 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
         }
 
-        mContainer = (FrameLayout) v.findViewById(R.id.container);
+        mContainer = (RevealFrameLayout) v.findViewById(R.id.container);
+        mCircularRevealView = (FrameLayout) v.findViewById(R.id.circular_reveal_view);
 
         mAddPlaceTextView = (TextView) v.findViewById(R.id.add_place_text_view);
         mAddPlaceTextView.setOnClickListener(new View.OnClickListener() {
@@ -181,13 +186,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
         mFabAddLocation = (FloatingActionButton) v.findViewById(R.id.add_location_fab);
         mIsFabRotated = false;
-        mFabAddLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                animateFab();
-            }
-        });
-
+        mFabAddLocation.setOnClickListener(fabOnClickListener());
         return v;
     }
 
@@ -328,18 +327,54 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mFabAddLocation.setEnabled(false);
+
                 // Determine center position for circular reveal (fab button)
-                final int x = (v.getRight() - v.getLeft()) / 2;
-                final int y = (v.getBottom() - v.getTop()) / 2;
+                final int x = (mFabAddLocation.getRight());
+                final int y = (mFabAddLocation.getBottom());
 
                 // Determine radius sizes
                 final int containerWidth = mContainer.getWidth();
                 final int containerHeight = mContainer.getHeight();
 
                 final float startingRadius = 0;
-                final float maxRadius = (float) Math.sqrt((containerWidth * containerWidth) + (containerHeight * containerHeight));
+                final float endRadius = (float) Math.sqrt((containerWidth * containerWidth) + (containerHeight * containerHeight));
 
-                final Animator animator = ViewAnimationUtils.createCircularReveal(v, x, y, startingRadius, maxRadius);
+                Log.d("CircularReveal", "x = " + x);
+                Log.d("CircularReveal", "y = " + y);
+                Log.d("CircularReveal", "containerWidth = " + containerWidth);
+                Log.d("CircularReveal", "containerHeight = " + containerHeight);
+                Log.d("CircularReveal", "endRadius = " + endRadius);
+
+                final Animator animator = ViewAnimationUtils.createCircularReveal(mCircularRevealView, x, y, startingRadius, endRadius);
+                animator.setDuration(500);
+                animator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        Intent intent = AddLocationActivity.newIntent(getActivity());
+                        startActivity(intent);
+                        // This view will still be visible if user presses the back button, but not the up button.
+                        mCircularRevealView.setVisibility(View.INVISIBLE);
+                        mFabAddLocation.setEnabled(true);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                mCircularRevealView.setVisibility(View.VISIBLE);
+                animator.start();
             }
         };
     }

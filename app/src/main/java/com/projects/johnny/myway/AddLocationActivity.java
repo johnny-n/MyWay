@@ -23,6 +23,8 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
  */
 public class AddLocationActivity extends AppCompatActivity {
 
+    // TODO: Animate circular reveal back to confirm_add_place_button when this activity starts
+
     public static Intent newIntent(Context context) {
         return new Intent(context, AddLocationActivity.class);
     }

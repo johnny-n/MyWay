@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<io.codetail.widget.RevealFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
@@ -32,4 +32,12 @@
         app:fabSize="normal"
         style="@style/FloatingActionButton"/>
 
-</FrameLayout>
+    <FrameLayout
+        android:id="@+id/circular_reveal_view"
+        android:background="@color/colorAccent"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom|end"/>
+
+</io.codetail.widget.RevealFrameLayout>

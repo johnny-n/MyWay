@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<io.codetail.widget.RevealLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:text="Address"
+        android:textColor="@android:color/black"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/SignUpTextView"/>
 
     <android.support.v7.widget.CardView
         app:cardElevation="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:id="@+id/view">
@@ -24,12 +34,20 @@
 
     </android.support.v7.widget.CardView>
 
+    <TextView
+        android:text="Name"
+        android:textColor="@android:color/black"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/SignUpTextView"/>
+
     <android.support.v7.widget.CardView
         app:cardElevation="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:layout_below="@+id/view">
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
 
         <!-- Background set to null to remove underline -->
         <EditText
@@ -40,24 +58,27 @@
             android:textSize="20sp"
             android:singleLine="true"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_below="@+id/view"
-            android:layout_alignStart="@+id/view"/>
+            android:layout_height="60dp"/>
 
     </android.support.v7.widget.CardView>
 
-    <Button
-        android:id="@+id/confirm_add_place_button"
-        android:text="@string/plus_sign"
-        android:background="@drawable/add_place_button_selector"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="70dp"
-        android:layout_marginBottom="120dp"
-        style="@style/AddPlaceButton"/>
+    <android.support.v7.widget.CardView
+        app:cardElevation="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <Button
+            android:id="@+id/confirm_add_place_button"
+            android:text="Add Place"
+            android:textColor="@android:color/white"
+            android:background="@color/colorAccent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </android.support.v7.widget.CardView>
 
 
-
-</RelativeLayout>
+</io.codetail.widget.RevealLinearLayout>
