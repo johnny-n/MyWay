@@ -133,10 +133,6 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
          *       not granted, then you need to call Activity.Compat.requestpermissions to request it.
          */
         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-        if ( ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-            ActivityCompat.requestPermissions( getActivity(), new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION  }, LOCATION_REQUEST_CODE );
-            Log.i("Location Check", "Completed");
-        }
 
         System.out.println("Location is..." + isLocationEnabled(getContext()));
 
@@ -176,13 +172,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         mCircularRevealView = (FrameLayout) v.findViewById(R.id.circular_reveal_view);
 
         mAddPlaceTextView = (TextView) v.findViewById(R.id.add_place_text_view);
-        mAddPlaceTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent addLocationIntent = AddLocationActivity.newIntent(getActivity());
-                startActivity(addLocationIntent);
-            }
-        });
+        mAddPlaceTextView.setOnClickListener(fabOnClickListener());
 
         mFabAddLocation = (FloatingActionButton) v.findViewById(R.id.add_location_fab);
         mIsFabRotated = false;
@@ -327,11 +317,19 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFabAddLocation.setEnabled(false);
+                v.setEnabled(false);
 
-                // Determine center position for circular reveal (fab button)
-                final int x = (mFabAddLocation.getRight());
-                final int y = (mFabAddLocation.getBottom());
+                // Determine center position for circular reveal
+                final int x;
+                final int y;
+                // Position center of circular reveal depending on text or FAB clicked
+                if (v.getId() == mAddPlaceTextView.getId()) {
+                    x = v.getRight() / 2;
+                    y = v.getBottom() / 2;
+                } else {
+                    x = v.getRight();
+                    y = v.getBottom();
+                }
 
                 // Determine radius sizes
                 final int containerWidth = mContainer.getWidth();
@@ -339,12 +337,6 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
                 final float startingRadius = 0;
                 final float endRadius = (float) Math.sqrt((containerWidth * containerWidth) + (containerHeight * containerHeight));
-
-                Log.d("CircularReveal", "x = " + x);
-                Log.d("CircularReveal", "y = " + y);
-                Log.d("CircularReveal", "containerWidth = " + containerWidth);
-                Log.d("CircularReveal", "containerHeight = " + containerHeight);
-                Log.d("CircularReveal", "endRadius = " + endRadius);
 
                 final Animator animator = ViewAnimationUtils.createCircularReveal(mCircularRevealView, x, y, startingRadius, endRadius);
                 animator.setDuration(450);

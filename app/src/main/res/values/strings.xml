@@ -15,12 +15,11 @@
     <string name="sign_up_password_confirm_text_view">Confirm your password</string>
     <string name="sign_up_password_retry_text_view">These passwords don\'t match. Try again?</string>
 
-
     <string name="sign_in_title_text_view">Sign into your MyWay account</string>
     <string name="sign_in_username_text_view">Username</string>
     <string name="sign_in_password_text_view">Password</string>
     <string name="sign_in_button">Sign in</string>
-    <string name="sign_up_for_account_text_view">Don\'t have an account? Sign up now!</string>
+    <string name="sign_up_button">Sign up</string>
 
     <string name="add_location_nickname_edit_text">Nickname This Place (Optional)</string>
     <string name="locations_setting_notify">Please turn on your locations settings</string>

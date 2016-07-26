@@ -29,7 +29,7 @@ public class SignInFragment extends Fragment {
     private EditText mUsername;
     private EditText mPassword;
     private TextView mUsernameRetry;
-    private TextView mSignUpAccountTextView;
+    private TextView mSignUpButton;
     private Button mSignInButton;
 
     public static final String USER_UID_KEY = "USER_UID_KEY";
@@ -46,7 +46,7 @@ public class SignInFragment extends Fragment {
         mUsername = (EditText) v.findViewById(R.id.sign_in_username_edit_text);
         mPassword = (EditText) v.findViewById(R.id.sign_in_password_edit_text);
         mUsernameRetry = (TextView) v.findViewById(R.id.username_retry_text_view);
-        mSignUpAccountTextView = (TextView) v.findViewById(R.id.sign_up_for_account_text_view);
+        mSignUpButton = (Button) v.findViewById(R.id.sign_up_button);
         mSignInButton = (Button) v.findViewById(R.id.sign_in_button);
 
         mUsernameRetry.setVisibility(View.GONE);
@@ -64,7 +64,7 @@ public class SignInFragment extends Fragment {
                 }
             }
         });
-        mSignUpAccountTextView.setOnClickListener(new View.OnClickListener() {
+        mSignUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: Automatically log user in after creating account
