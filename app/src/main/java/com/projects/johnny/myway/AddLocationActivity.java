@@ -1,5 +1,6 @@
 package com.projects.johnny.myway;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
@@ -18,12 +20,16 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
+import io.codetail.animation.ViewAnimationUtils;
+import io.codetail.widget.RevealFrameLayout;
+import io.codetail.widget.RevealLinearLayout;
+
 /**
  * Created by Johnny on 2/9/16.
  */
 public class AddLocationActivity extends AppCompatActivity {
 
-    // TODO: Animate circular reveal back to confirm_add_place_button when this activity starts
+    // TODO: Fix bug when adding location
 
     public static Intent newIntent(Context context) {
         return new Intent(context, AddLocationActivity.class);
@@ -34,6 +40,10 @@ public class AddLocationActivity extends AppCompatActivity {
 
     private String locationAddress = "";
     private EditText mNicknameEditText;
+    private Button mConfirmAddPlaceButton;
+
+    private RevealFrameLayout mContainer;
+    private FrameLayout mCircularRevealView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +59,7 @@ public class AddLocationActivity extends AppCompatActivity {
         final Firebase mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID).child("Locations");
 
         // Get reference to button and have it initially disabled
-        final Button mConfirmAddPlaceButton = (Button) findViewById(R.id.confirm_add_place_button);
+        mConfirmAddPlaceButton = (Button) findViewById(R.id.confirm_add_place_button);
         mConfirmAddPlaceButton.setEnabled(BUTTON_DISABLED);
 
         // Obtain FragmentManager
@@ -97,6 +107,55 @@ public class AddLocationActivity extends AppCompatActivity {
         // For UP navigation button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        // Animation stuff
+        mContainer = (RevealFrameLayout) findViewById(R.id.add_location_container);
+        mCircularRevealView = (FrameLayout) findViewById(R.id.add_location_circular_reveal_view);
+
+
+        // Animate circular reveal
+        mContainer.post(new Runnable() {
+            @Override
+            public void run() {
+                // Determine center position for circular reveal (fab button)
+                final int x = mContainer.getRight() / 2;
+                final int y = mContainer.getBottom() / 2;
+
+                // Determine radius sizes
+                final int containerWidth = mContainer.getWidth();
+                final int containerHeight = mContainer.getHeight();
+
+                final float startingRadius = (float) Math.sqrt((containerWidth * containerWidth) + (containerHeight * containerHeight));;
+                final float endRadius = 0;
+
+                final Animator animator = ViewAnimationUtils.createCircularReveal(mCircularRevealView, x, y, startingRadius, endRadius);
+                animator.setDuration(400);
+                animator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mCircularRevealView.setVisibility(View.INVISIBLE);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+
+                animator.start();
+            }
+        });
+
     }
 
     @Override

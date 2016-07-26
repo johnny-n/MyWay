@@ -347,7 +347,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                 Log.d("CircularReveal", "endRadius = " + endRadius);
 
                 final Animator animator = ViewAnimationUtils.createCircularReveal(mCircularRevealView, x, y, startingRadius, endRadius);
-                animator.setDuration(500);
+                animator.setDuration(450);
                 animator.addListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
