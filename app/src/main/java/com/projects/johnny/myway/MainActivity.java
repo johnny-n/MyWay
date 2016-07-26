@@ -3,7 +3,7 @@ package com.projects.johnny.myway;
 
 import android.app.Fragment;
 
-public class DirectionsActivity extends SingleFragmentActivity {
+public class MainActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment createFragment() {

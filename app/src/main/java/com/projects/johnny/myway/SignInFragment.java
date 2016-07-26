@@ -18,11 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.AuthData;
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import java.util.regex.Pattern;
+
+// TODO: Merge SignInFragment and SignUpFragment into one Activity
 
 public class SignInFragment extends Fragment {
 
@@ -85,14 +86,14 @@ public class SignInFragment extends Fragment {
                             String UID = authData.getUid();
                             App app = (App) getActivity().getApplicationContext();
                             app.setUID(UID);
-                            Intent intent = new Intent(getActivity(), DirectionsActivity.class);
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
                             startActivity(intent);
                             getActivity().finish();
                         }
 
                         @Override
                         public void onAuthenticationError(FirebaseError firebaseError) {
-                            Toast.makeText(getContext(), "Failed to log in...", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity().getApplicationContext(), "Failed to log in...", Toast.LENGTH_SHORT).show();
                             System.out.println(firebaseError.getMessage());
                         }
                     });

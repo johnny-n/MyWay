@@ -17,23 +17,14 @@
         <activity android:name=".SignInActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".SignUpActivity"
             android:parentActivityName=".SignInActivity" />
-        <activity android:name=".DirectionsActivity" />
+        <activity android:name=".MainActivity" />
         <activity android:name=".RequestLocationActivity" />
-        <activity
-            android:name=".AddLocationActivity"
-            android:parentActivityName=".DirectionsActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".DirectionsActivity" />
-        </activity>
-
 
         <!-- API KEY for Google Places API -->
         <meta-data

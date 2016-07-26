@@ -3,12 +3,17 @@ package com.projects.johnny.myway;
 import android.animation.Animator;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethod;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -66,10 +71,7 @@ public class AddLocationFragment extends Fragment {
             @Override
             public void onPlaceSelected(Place place) {
                 // Obtain address from place selected
-                String locationAddress = place.getAddress().toString();
-
-                Log.d(TAG, "OnPlaceSelected " + locationAddress);
-
+                locationAddress = place.getAddress().toString();
                 mPlaceAutocompleteFragment.setText(locationAddress);
                 // Enable button after selecting a place
                 mConfirmAddPlaceButton.setEnabled(true);
@@ -85,6 +87,10 @@ public class AddLocationFragment extends Fragment {
         mConfirmAddPlaceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Hide keyboard
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mNicknameEditText.getWindowToken(), 0);
+
                 // Add location to storage with or without nickname, depending
                 //  on what the user wants.
                 String nickname;
@@ -96,19 +102,15 @@ public class AddLocationFragment extends Fragment {
                     mFirebaseRef.child(nickname).setValue(locationAddress);
                 }
 
-                // Return to previous fragment
-                Fragment fragment = DirectionsFragment.newInstance();
-                fm.beginTransaction()
-                        .replace(R.id.fragment_container, fragment)
-                        .commit();
+                returnToDirectionsFragment();
             }
         });
 
         mPlaceAutocompleteFragment.setHint("Search Places");
 
         // For UP navigation button
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+//        getActivity().getActionBar().setDisplayShowHomeEnabled(true);
 
         // Animation stuff
         mContainer = (RevealFrameLayout) v.findViewById(R.id.add_location_container);
@@ -158,5 +160,12 @@ public class AddLocationFragment extends Fragment {
         });
 
         return v;
+    }
+
+    private void returnToDirectionsFragment() {
+        // Remember that we're using FragmentManager here rather than ChildFragmentManager
+        final FragmentManager fm = getFragmentManager();
+//        // Return to previous fragment
+        fm.popBackStack();
     }
 }

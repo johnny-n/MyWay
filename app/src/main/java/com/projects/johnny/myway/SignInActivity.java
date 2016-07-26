@@ -21,7 +21,7 @@ public class SignInActivity extends SingleFragmentActivity {
         // This is to automatically log in users right after they sign up for an account.
         App app = (App) getApplicationContext();
         if (app.getUID() != null) {
-            Intent intent = new Intent(this, DirectionsActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
         }
     }
 }
