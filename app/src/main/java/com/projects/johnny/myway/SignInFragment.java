@@ -41,6 +41,7 @@ public class SignInFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_sign_in, container, false);
 
         // Get reference to Firebase
+        // TODO: Move Firebase to parent activity
         Firebase.setAndroidContext(getActivity());
         final Firebase mFirebaseRef = new Firebase("https://myways.firebaseIO.com/");
 
@@ -77,15 +78,16 @@ public class SignInFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (isValid()) {
-                    String email = mUsername.getText().toString();
-                    String password = mPassword.getText().toString();
+                    final String email = mUsername.getText().toString();
+                    final String password = mPassword.getText().toString();
+
+
                     mFirebaseRef.authWithPassword(email, password, new Firebase.AuthResultHandler() {
                         @Override
                         public void onAuthenticated(AuthData authData) {
                             // Use App class for session storage of UID
                             String UID = authData.getUid();
-                            App app = (App) getActivity().getApplicationContext();
-                            app.setUID(UID);
+                            App.Companion.setUID(UID);
                             Intent intent = new Intent(getActivity(), MainActivity.class);
                             startActivity(intent);
                             getActivity().finish();

@@ -60,7 +60,6 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     // We overwrite this in Firebase to activite the listener for updates
     public static final String FIREBASE_REFRESH_PLACEHOLDER = "REFRESH";
     private static final String DIALOG_ADDRESS = "dialog_address";
-    private static final int LOCATION_REQUEST_CODE = 2;
 
     public static DirectionsFragment newInstance() {
         return new DirectionsFragment();
@@ -91,8 +90,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         locations = new ArrayList<>();
 
         // Get reference to Firebase
-        App app = (App) getActivity().getApplicationContext();
-        String UID = app.getUID();
+        String UID = App.Companion.getUID();
         Firebase.setAndroidContext(getActivity());
         mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID);
 
