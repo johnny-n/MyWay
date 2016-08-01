@@ -50,7 +50,7 @@ public class AddLocationFragment extends Fragment {
 
         // Firebase
         App app = (App) getActivity().getApplicationContext();
-        String UID = app.getUID();
+        String UID = App.Companion.getUID();
         Firebase.setAndroidContext(getActivity().getApplicationContext());
         final Firebase mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID).child("Locations");
 

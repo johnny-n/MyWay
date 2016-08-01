@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 // No explanation needed, we can request the permission.
 
-                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION), App.LOCATION_REQUEST_CODE)
+                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION), App.locationRequestCode)
                 Log.i("Location Check", "Completed")
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an

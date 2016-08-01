@@ -289,7 +289,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                 return true;
             case R.id.ic_sign_out:
                 App app = (App) getActivity().getApplicationContext();
-                app.setUID(null);
+                App.Companion.setUID(null);
                 Intent signOutIntent = new Intent(getActivity(), SignInActivity.class);
                 startActivity(signOutIntent);
             default:

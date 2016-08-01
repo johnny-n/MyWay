@@ -11,7 +11,6 @@ import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.credentials.Credential
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 import org.jetbrains.anko.onClick
-import org.jetbrains.anko.onFocusChange
 
 class SignInFragment : Fragment() {
 
@@ -27,7 +26,7 @@ class SignInFragment : Fragment() {
 
         usernameRetry.visibility = View.GONE
 
-        username.onFocusChange { view, hasFocus ->
+        username.setOnFocusChangeListener { view, hasFocus ->
             if (!hasFocus) {
                 val name = username.text.toString()
                 val visibility = if (isValidUsername(name)) View.GONE else View.VISIBLE

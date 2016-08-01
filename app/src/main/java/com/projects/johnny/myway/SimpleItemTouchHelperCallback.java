@@ -21,7 +21,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
         // Get reference to Firebase
         App app = (App) mActivity.getApplicationContext();
-        String UID = app.getUID();
+        String UID = App.Companion.getUID();
         Firebase.setAndroidContext(mActivity);
         mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID);
     }
