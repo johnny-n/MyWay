@@ -48,9 +48,11 @@ class SignInActivity : AppCompatActivity() {
             result: CredentialRequestResult ->
                 if (result.status.isSuccess) {
                     // Login user automatically if password is saved
+                    Log.d("SignInActivity", "Authenticating user")
                     authenticateWithCredential(result.credential)
                 } else {
                     // Proceed with SignInFragment
+                    Log.d("SignInActivity", "Setting fragment to SignInFragment()")
                     fragmentManager.beginTransaction()
                             .add(R.id.fragment_container, SignInFragment()) // TODO: Change to newInstance() pattern
                             .commit()
