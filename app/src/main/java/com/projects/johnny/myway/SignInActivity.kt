@@ -22,11 +22,6 @@ import com.google.android.gms.common.api.GoogleApiClient
 
 class SignInActivity : AppCompatActivity() {
 
-    companion object {
-        val emailKey = "36"
-        val passwordKey = "63"
-    }
-
     val firebaseRef: Firebase by lazy { Firebase("https://myways.firebaseIO.com/") }
 
     val credentialsClient: GoogleApiClient by lazy {
@@ -90,7 +85,7 @@ class SignInActivity : AppCompatActivity() {
             } else {
                 // No explanation needed, we can request the permission.
 
-                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION), App.LOCATION_REQUEST_CODE)
+                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION), App.locationRequestCode)
                 Log.i("Location Check", "Completed")
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an

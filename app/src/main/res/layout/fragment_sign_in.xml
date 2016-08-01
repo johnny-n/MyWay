@@ -34,14 +34,14 @@
             style="@style/SignUpTextView"/>
 
         <EditText
-            android:id="@+id/sign_in_username_edit_text"
+            android:id="@+id/username"
             android:hint="@string/username_hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/SignUpEditText"/>
 
         <TextView
-            android:id="@+id/username_retry_text_view"
+            android:id="@+id/usernameRetry"
             android:text="Please enter a valid email address"
             android:textColor="@android:color/holo_red_light"
             android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
             style="@style/SignUpTextView"/>
 
         <EditText
-            android:id="@+id/sign_in_password_edit_text"
+            android:id="@+id/password"
             android:maxLength="15"
             android:password="true"
             android:inputType="textPassword"
@@ -69,7 +69,7 @@
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/sign_up_button"
+                android:id="@+id/signUpButton"
                 android:text="@string/sign_up_button"
                 android:background="@drawable/text_button_selector"
                 android:layout_width="wrap_content"
@@ -81,7 +81,7 @@
                 android:layout_height="match_parent"/>
 
             <Button
-                android:id="@+id/sign_in_button"
+                android:id="@+id/signInButton"
                 android:text="@string/sign_in_button"
                 android:background="@drawable/primary_button_selector"
                 android:layout_width="wrap_content"
