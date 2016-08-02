@@ -90,7 +90,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         locations = new ArrayList<>();
 
         // Get reference to Firebase
-        String UID = App.Companion.getUID();
+        String UID = App.getInstance().getUID();
         Firebase.setAndroidContext(getActivity());
         mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID);
 
@@ -288,8 +288,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                 updateUI();
                 return true;
             case R.id.ic_sign_out:
-                App app = (App) getActivity().getApplicationContext();
-                App.Companion.setUID(null);
+//                App.getInstance().setUID(null);
                 Intent signOutIntent = new Intent(getActivity(), SignInActivity.class);
                 startActivity(signOutIntent);
             default:

@@ -20,7 +20,12 @@ import com.google.android.gms.auth.api.credentials.CredentialRequestResult
 import com.google.android.gms.auth.api.credentials.IdentityProviders
 import com.google.android.gms.common.api.GoogleApiClient
 
+// TODO: Nothing shows during runtime. FIX IT.
 class SignInActivity : AppCompatActivity() {
+
+    companion object {
+        val locationRequestcode = 2
+    }
 
     val firebaseRef: Firebase by lazy { Firebase("https://myways.firebaseIO.com/") }
 
@@ -36,26 +41,29 @@ class SignInActivity : AppCompatActivity() {
                 .build()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_container)
         requestPermissions()
 
         Firebase.setAndroidContext(this)
+
+        Log.d("SignInActivity", "Begin transaction to add SignInFragment")
+        fragmentManager.beginTransaction()
+                .add(R.id.fragment_container, SignInFragment()) // TODO: Change to newInstance() pattern
+                .commit()
 
         // Check for saved credentials
         Auth.CredentialsApi.request(credentialsClient, credentialRequest).setResultCallback {
             result: CredentialRequestResult ->
                 if (result.status.isSuccess) {
                     // Login user automatically if password is saved
-                    Log.d("SignInActivity", "Authenticating user")
+                    Log.d("SignInActivity", "Result success, authenticating user...")
                     authenticateWithCredential(result.credential)
                 } else {
                     // Proceed with SignInFragment
-                    Log.d("SignInActivity", "Setting fragment to SignInFragment()")
-                    fragmentManager.beginTransaction()
-                            .add(R.id.fragment_container, SignInFragment()) // TODO: Change to newInstance() pattern
-                            .commit()
+                    Log.d("SignInActivity", "Result not success")
+
                 }
         }
     }
@@ -64,7 +72,7 @@ class SignInActivity : AppCompatActivity() {
         firebaseRef.authWithPassword(credential.name, credential.password,
                 object: Firebase.AuthResultHandler {
                     override fun onAuthenticated(authData: AuthData) {
-                        App.UID = authData.uid
+                        App.getInstance().uid = authData.uid
                         val intent = Intent(applicationContext, MainActivity::class.java)
                         startActivity(intent)
                         finish() // Finish activity
@@ -87,7 +95,7 @@ class SignInActivity : AppCompatActivity() {
             } else {
                 // No explanation needed, we can request the permission.
 
-                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION), App.locationRequestCode)
+                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION), locationRequestcode)
                 Log.i("Location Check", "Completed")
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an

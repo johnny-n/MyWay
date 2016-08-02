@@ -49,8 +49,7 @@ public class AddLocationFragment extends Fragment {
         mNicknameEditText = (EditText) v.findViewById(R.id.add_location_nickname_edit_text);
 
         // Firebase
-        App app = (App) getActivity().getApplicationContext();
-        String UID = App.Companion.getUID();
+        String UID = App.getInstance().getUID();
         Firebase.setAndroidContext(getActivity().getApplicationContext());
         final Firebase mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID).child("Locations");
 

@@ -13,8 +13,8 @@ class MainActivity : AppCompatActivity() {
 
     var backEnabled = false
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_container)
 
         fragmentManager.beginTransaction()
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 // No explanation needed, we can request the permission.
 
-                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION), App.locationRequestCode)
+                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION), SignInActivity.locationRequestcode)
                 Log.i("Location Check", "Completed")
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
