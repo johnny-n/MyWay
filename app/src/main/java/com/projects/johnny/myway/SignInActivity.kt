@@ -20,7 +20,6 @@ import com.google.android.gms.auth.api.credentials.CredentialRequestResult
 import com.google.android.gms.auth.api.credentials.IdentityProviders
 import com.google.android.gms.common.api.GoogleApiClient
 
-// TODO: Nothing shows during runtime. FIX IT.
 class SignInActivity : AppCompatActivity() {
 
     companion object {
@@ -34,6 +33,7 @@ class SignInActivity : AppCompatActivity() {
                 .addApi(Auth.CREDENTIALS_API)
                 .build()
     }
+
     val credentialRequest: CredentialRequest by lazy {
         CredentialRequest.Builder()
                 .setPasswordLoginSupported(true)

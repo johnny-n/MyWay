@@ -36,6 +36,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -223,7 +224,6 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
             try {
                 locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-
             } catch (Settings.SettingNotFoundException e) {
                 e.printStackTrace();
             }
@@ -288,8 +288,8 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                 updateUI();
                 return true;
             case R.id.ic_sign_out:
-//                App.getInstance().setUID(null);
-                Intent signOutIntent = new Intent(getActivity(), SignInActivity.class);
+                // TODO: Delete credentials when user signs out
+                Intent signOutIntent = new Intent(getActivity(), SignInActivity.class););
                 startActivity(signOutIntent);
             default:
                 break;
