@@ -7,12 +7,17 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.credentials.Credential
+import com.google.android.gms.common.api.Status
 import kotlinx.android.synthetic.main.fragment_sign_in.*
+import org.jetbrains.anko.act
 import org.jetbrains.anko.onClick
 
 class SignInFragment : Fragment() {
+
+    private val rc_save = 12345
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -28,7 +33,7 @@ class SignInFragment : Fragment() {
             if (!hasFocus) {
                 val name = username.text.toString()
                 val visibility = if (isValidUsername(name)) View.GONE else View.VISIBLE
-                username.visibility = visibility
+                usernameRetry.visibility = visibility
             }
         }
         signUpButton.onClick { // onClick belongs to anko
@@ -44,9 +49,19 @@ class SignInFragment : Fragment() {
                                         .setPassword(pass)
                                         .build()
                     Auth.CredentialsApi.save(credentialsClient, credential).setResultCallback {
-                        if (it.status.isSuccess) {
+                        status: Status ->
+                        Log.d("Credentials", status.toString())
+                        if (status.isSuccess) {
                             Log.i("SignInFragment", "Credentials saved!")
                             authenticateWithCredential(credential)
+                        } else {
+                            if (status.hasResolution()) {
+                                // Try to resolve the save request. This will prompt
+                                // the user if the credential is new.
+                                status.startResolutionForResult(activity, rc_save)
+                            } else {
+                                Log.e("CredentialsApi.save", "Save failed!")
+                            }
                         }
                     }
                 }

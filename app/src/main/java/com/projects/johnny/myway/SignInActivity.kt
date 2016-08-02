@@ -47,6 +47,7 @@ class SignInActivity : AppCompatActivity() {
         requestPermissions()
 
         Firebase.setAndroidContext(this)
+        credentialsClient.connect()
 
         Log.d("SignInActivity", "Begin transaction to add SignInFragment")
         fragmentManager.beginTransaction()
