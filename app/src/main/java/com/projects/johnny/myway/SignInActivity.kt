@@ -75,7 +75,6 @@ class SignInActivity : AppCompatActivity() {
                     override fun onAuthenticated(authData: AuthData) {
                         App.getInstance().uid = authData.uid
                         val intent = Intent(applicationContext, MainActivity::class.java)
-                        val args = Bundle()
                         startActivity(intent)
                         finish() // Finish activity
                     }

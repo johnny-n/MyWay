@@ -30,6 +30,7 @@ public class AddressDialogFragment extends DialogFragment {
         View v = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_address_display, null, false);
 
+        // TODO: Fix issue with "Activity's LayoutInflater already has a Factory installed so we can not install AppCompat's"
         String address = (String) getArguments().getSerializable(ARG_ADDRESS);
         mAddressTextView = (TextView) v.findViewById(R.id.dialog_address_text_view);
         mAddressTextView.setText(address);
