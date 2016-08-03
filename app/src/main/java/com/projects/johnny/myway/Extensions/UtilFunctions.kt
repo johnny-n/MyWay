@@ -12,7 +12,3 @@ fun replaceFragment(activity: Activity, containerId: Int, fragment: Fragment) {
                             .addToBackStack(null)
                             .commit()
 }
-
-fun MainActivity.setBackEnabled(enabled: Boolean) {
-    this.backEnabled = enabled
-}

@@ -10,8 +10,6 @@ class MainActivity : AppCompatActivity() {
         val locationRequestCode = 2
     }
 
-    var backEnabled = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -25,6 +23,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (backEnabled) return else super.onBackPressed()
+
+        val count = fragmentManager.backStackEntryCount
+
+        // pops the back stack if there are fragments alive there
+        // do nothing otherwise (meaning, dont exit app if we're inside DirectionsFragment
+        if (count == 0) null else fragmentManager.popBackStack()
     }
 }

@@ -28,7 +28,7 @@ public class AddressDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View v = LayoutInflater.from(getActivity())
-                .inflate(R.layout.dialog_address_display, null);
+                .inflate(R.layout.dialog_address_display, null, false);
 
         String address = (String) getArguments().getSerializable(ARG_ADDRESS);
         mAddressTextView = (TextView) v.findViewById(R.id.dialog_address_text_view);

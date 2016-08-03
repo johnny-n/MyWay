@@ -417,7 +417,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
             mDisplayAddressIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final FragmentManager fm = getChildFragmentManager();
+                    final FragmentManager fm = getFragmentManager();
                     AddressDialogFragment addressDialogFragment = AddressDialogFragment.newInstance(locationAddress);
                     addressDialogFragment.show(fm, DIALOG_ADDRESS);
                 }
