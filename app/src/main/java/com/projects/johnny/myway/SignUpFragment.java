@@ -105,7 +105,7 @@ public class SignUpFragment extends Fragment {
                             mFirebaseRefChild.child("FirstName").setValue(mFirstName.getText().toString());
                             mFirebaseRefChild.child("LastName").setValue(mLastName.getText().toString());
 
-                            Intent intent = new Intent(getActivity(), SignInActivity.class);
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
                             startActivity(intent);
                         }
                         @Override

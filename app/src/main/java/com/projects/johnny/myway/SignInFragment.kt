@@ -7,17 +7,13 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.common.api.Status
 import kotlinx.android.synthetic.main.fragment_sign_in.*
-import org.jetbrains.anko.act
 import org.jetbrains.anko.onClick
 
 class SignInFragment : Fragment() {
-
-    private val rc_save = 12345
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -41,7 +37,7 @@ class SignInFragment : Fragment() {
         }
         signInButton.setOnClickListener {
             if (isValid()) {
-                with(activity as SignInActivity) {
+                with(activity as MainActivity) {
                     val email = username.text.toString()
                     val pass = password.text.toString()
                     val credential = Credential.Builder(email)
@@ -58,7 +54,8 @@ class SignInFragment : Fragment() {
                             if (status.hasResolution()) {
                                 // Try to resolve the save request. This will prompt
                                 // the user if the credential is new.
-                                status.startResolutionForResult(activity, rc_save)
+                                status.startResolutionForResult(activity, MainActivity.rc_save)
+                                authenticateWithCredential(credential)
                             } else {
                                 Log.e("CredentialsApi.save", "Save failed!")
                             }

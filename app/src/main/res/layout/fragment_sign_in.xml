@@ -104,19 +104,20 @@
 
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/loadingOverlay"
-        android:background="@color/white"
-        android:alpha=".7"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <!--TODO: Add progress indicator when checking for existing credentials-->
+    <!--<FrameLayout-->
+        <!--android:id="@+id/loadingOverlay"-->
+        <!--android:background="@color/white"-->
+        <!--android:alpha=".7"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
 
-        <android.support.v4.widget.ContentLoadingProgressBar
-            android:layout_gravity="center"
-            android:indeterminate="true"
-            android:layout_width="100dp"
-            android:layout_height="100dp"/>
+        <!--<android.support.v4.widget.ContentLoadingProgressBar-->
+            <!--android:layout_gravity="center"-->
+            <!--android:indeterminate="true"-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="100dp"/>-->
 
-    </FrameLayout>
+    <!--</FrameLayout>-->
 
 </FrameLayout>

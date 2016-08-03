@@ -1,10 +1,12 @@
 package com.projects.johnny.myway;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -12,8 +14,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -40,6 +44,9 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.credentials.Credential;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Result;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
 import com.google.maps.GeoApiContext;
 
@@ -74,6 +81,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     }
 
     private GoogleApiClient mGoogleApiClient;
+    private Credential mCredential;
 
     private Double lat;
     private Double lng;
@@ -86,7 +94,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
     private RecyclerView mRecyclerView;
     private DirectionAdapter mDirectionAdapter;
-    private ArrayList<MyLocation> locations;
+    private ArrayList<MyLocation> mLocations;
     private Firebase mFirebaseRef;
 
     private EtaHandlerThread<DirectionItemViewHolder> mEtaHandlerThread;
@@ -95,26 +103,32 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_directions, container, false);
-        locations = new ArrayList<>();
+
+        // Get credential from argument
+        mCredential = (Credential) getArguments().getParcelable(ARG_CRED);
+
+        mLocations = new ArrayList<>();
 
         // Get reference to Firebase
-        String UID = App.getInstance().getUID();
+        String UID = App.getInstance()
+                        .getUID();
         Firebase.setAndroidContext(getActivity());
         mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID);
 
         // Add listener to update recycler view every time Firebase is updated
-        mFirebaseRef.child("Locations").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                updateLocationsWithDataSnapshot(dataSnapshot);
-                updateUI();
-            }
+        mFirebaseRef.child("Locations")
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            updateLocationsWithDataSnapshot(dataSnapshot);
+                            updateUI();
+                        }
 
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
 
-            }
-        });
+                        }
+                    });
 
         // Create instance of GoogleAPIClient
         if (mGoogleApiClient == null) {
@@ -125,7 +139,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                     .build();
         }
 
-        // Goes to activity that notifies user to turn on locations if
+        // Goes to activity that notifies user to turn on mLocations if
         // the user's location settings is turned off.
         if (!isLocationEnabled(getActivity())) {
             Intent intent = new Intent(getActivity(), RequestLocationActivity.class);
@@ -142,8 +156,8 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
         System.out.println("Location is..." + isLocationEnabled(getActivity()));
 
-        // Get last known location
         final Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
         // Get latitude and longitude of last known location
         lat = location.getLatitude();
         lng = location.getLongitude();
@@ -161,7 +175,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         mEtaHandlerThread.getLooper();
 
         // We set up the adapter if and only if location places are set;
-        mDirectionAdapter = new DirectionAdapter(locations);
+        mDirectionAdapter = new DirectionAdapter(mLocations);
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mDirectionAdapter);
@@ -191,7 +205,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
     private void updateUI() {
         mFirebaseRef.child("Locations").child(FIREBASE_REFRESH_PLACEHOLDER).setValue("Refresh");
-        mDirectionAdapter.updateLocations(locations);
+        mDirectionAdapter.updateLocations(mLocations);
         mDirectionAdapter.notifyDataSetChanged();
 
         if (mDirectionAdapter.getItemCount() == 0) {
@@ -204,22 +218,22 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         }
     }
 
-    // Updates our list of locations stored in the fragment
+    // Updates our list of mLocations stored in the fragment
     private void updateLocationsWithDataSnapshot(DataSnapshot dataSnapshot) {
-        // Obtain location data as Map object and iterate through, adding to locations variable
-        locations = new ArrayList<>();
+        // Obtain location data as Map object and iterate through, adding to mLocations variable
+        mLocations = new ArrayList<>();
         Map<String, String> mLocations = (Map<String, String>) dataSnapshot.getValue();
         Iterator it = mLocations.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             MyLocation location = new MyLocation(pair.getKey().toString(), pair.getValue().toString());
             if (!pair.getKey().toString().equals(FIREBASE_REFRESH_PLACEHOLDER)) {
-                locations.add(location);
+                this.mLocations.add(location);
             }
         }
     }
 
-    // Returns true/false depending on whether locations is turned on or off.
+    // Returns true/false depending on whether mLocations is turned on or off.
     private static boolean isLocationEnabled(Context context) {
         int locationMode = 0;
         String locationProviders;
@@ -291,13 +305,20 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                 updateUI();
                 return true;
             case R.id.ic_sign_out:
-                // TODO: Delete credentials when user signs out
-//                GoogleApiClient apiClient = new GoogleApiClient.Builder(getActivity())
-//                                                           .addApi(Auth.CREDENTIALS_API)
-//                                                           .build();
-//                apiClient.connect();
-                Intent signOutIntent = new Intent(getActivity(), SignInActivity.class);
-                startActivity(signOutIntent);
+                // Delete credentials before signing out.
+                MainActivity activity = (MainActivity) getActivity();
+                Auth.CredentialsApi.delete(activity.getCredentialsClient(), mCredential).setResultCallback(new ResultCallback<Result>() {
+                    @Override
+                    public void onResult(@NonNull Result result) {
+                        Status status = result.getStatus();
+                        if (status.isSuccess()) {
+                            // Credential was deleted successfully
+                            getFragmentManager().beginTransaction()
+                                    .replace(R.id.fragment_container, new SignInFragment())
+                                    .commit();
+                        }
+                    }
+                });
             default:
                 break;
         }

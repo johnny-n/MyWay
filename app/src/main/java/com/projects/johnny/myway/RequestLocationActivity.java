@@ -22,7 +22,7 @@ public class RequestLocationActivity extends AppCompatActivity {
         SignOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
             }
@@ -32,7 +32,7 @@ public class RequestLocationActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(intent);
         finish();
