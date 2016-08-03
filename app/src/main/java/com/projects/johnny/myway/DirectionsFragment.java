@@ -37,6 +37,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.credentials.Credential;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -54,6 +55,8 @@ import io.codetail.widget.RevealFrameLayout;
 
 public class DirectionsFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private static final String ARG_CRED = "ARG_CRED";
+
     // An instance of GeoApiContext is required to use Google Maps API
     final GeoApiContext context = new GeoApiContext().setApiKey("AIzaSyAXSGlwghZsgIFWY2PIBYeyAD-Opq0pP2g");
 
@@ -62,8 +65,12 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     public static final String FIREBASE_REFRESH_PLACEHOLDER = "REFRESH";
     private static final String DIALOG_ADDRESS = "dialog_address";
 
-    public static DirectionsFragment newInstance() {
-        return new DirectionsFragment();
+    public static DirectionsFragment newInstance(Credential credential) {
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_CRED, credential);
+        DirectionsFragment fragment = new DirectionsFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     private GoogleApiClient mGoogleApiClient;
@@ -118,7 +125,8 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                     .build();
         }
 
-        // Goes to activity that notifies user to turn on locations
+        // Goes to activity that notifies user to turn on locations if
+        // the user's location settings is turned off.
         if (!isLocationEnabled(getActivity())) {
             Intent intent = new Intent(getActivity(), RequestLocationActivity.class);
             intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
@@ -134,37 +142,34 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
         System.out.println("Location is..." + isLocationEnabled(getActivity()));
 
-        if (isLocationEnabled(getActivity())) {
-            // Get last known location after performing explicit permission check
-            final Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            // Get latitude and longitude of last known location
-            lat = location.getLatitude();
-            lng = location.getLongitude();
+        // Get last known location
+        final Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        // Get latitude and longitude of last known location
+        lat = location.getLatitude();
+        lng = location.getLongitude();
 
-            // Set up Handler & HandlerThread to do background task
-            final Handler responseHandler = new Handler();
-            mEtaHandlerThread = new EtaHandlerThread<>(responseHandler, context, lat, lng);
-            mEtaHandlerThread.setEtaInterface(new EtaHandlerThread.EtaInterface() {
-                @Override
-                public void setInformation(DirectionItemViewHolder viewHolder, String travelTime) {
-                    viewHolder.setEtaTime(travelTime);
-                }
-            });
-            mEtaHandlerThread.start();
-            mEtaHandlerThread.getLooper();
+        // Set up Handler & HandlerThread to do background task
+        final Handler responseHandler = new Handler();
+        mEtaHandlerThread = new EtaHandlerThread<>(responseHandler, context, lat, lng);
+        mEtaHandlerThread.setEtaInterface(new EtaHandlerThread.EtaInterface() {
+            @Override
+            public void setInformation(DirectionItemViewHolder viewHolder, String travelTime) {
+                viewHolder.setEtaTime(travelTime);
+            }
+        });
+        mEtaHandlerThread.start();
+        mEtaHandlerThread.getLooper();
 
-            // We set up the adapter if and only if location places are set;
-            mDirectionAdapter = new DirectionAdapter(locations);
-            mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-            mRecyclerView.setAdapter(mDirectionAdapter);
+        // We set up the adapter if and only if location places are set;
+        mDirectionAdapter = new DirectionAdapter(locations);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(mDirectionAdapter);
 
-            // for touch events on RecyclerView
-            ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mDirectionAdapter, getActivity());
-            ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-            touchHelper.attachToRecyclerView(mRecyclerView);
-
-        }
+        // for touch events on RecyclerView
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mDirectionAdapter, getActivity());
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(mRecyclerView);
 
         mContainer = (RevealFrameLayout) v.findViewById(R.id.container);
         mCircularRevealView = (FrameLayout) v.findViewById(R.id.circular_reveal_view);
@@ -185,19 +190,17 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     }
 
     private void updateUI() {
-        if (isLocationEnabled(getActivity())) {
-            mFirebaseRef.child("Locations").child(FIREBASE_REFRESH_PLACEHOLDER).setValue("Refresh");
-            mDirectionAdapter.updateLocations(locations);
-            mDirectionAdapter.notifyDataSetChanged();
+        mFirebaseRef.child("Locations").child(FIREBASE_REFRESH_PLACEHOLDER).setValue("Refresh");
+        mDirectionAdapter.updateLocations(locations);
+        mDirectionAdapter.notifyDataSetChanged();
 
-            if (mDirectionAdapter.getItemCount() == 0) {
-                Log.i("Item Count", String.valueOf(mDirectionAdapter.getItemCount()));
-                mRecyclerView.setVisibility(View.GONE);
-                mAddPlaceTextView.setVisibility(View.VISIBLE);
-            } else {
-                mRecyclerView.setVisibility(View.VISIBLE);
-                mAddPlaceTextView.setVisibility(View.GONE);
-            }
+        if (mDirectionAdapter.getItemCount() == 0) {
+            Log.i("Item Count", String.valueOf(mDirectionAdapter.getItemCount()));
+            mRecyclerView.setVisibility(View.GONE);
+            mAddPlaceTextView.setVisibility(View.VISIBLE);
+        } else {
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mAddPlaceTextView.setVisibility(View.GONE);
         }
     }
 
@@ -289,7 +292,11 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                 return true;
             case R.id.ic_sign_out:
                 // TODO: Delete credentials when user signs out
-                Intent signOutIntent = new Intent(getActivity(), SignInActivity.class););
+//                GoogleApiClient apiClient = new GoogleApiClient.Builder(getActivity())
+//                                                           .addApi(Auth.CREDENTIALS_API)
+//                                                           .build();
+//                apiClient.connect();
+                Intent signOutIntent = new Intent(getActivity(), SignInActivity.class);
                 startActivity(signOutIntent);
             default:
                 break;
@@ -410,7 +417,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
             mDisplayAddressIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final FragmentManager fm = getFragmentManager();
+                    final FragmentManager fm = getChildFragmentManager();
                     AddressDialogFragment addressDialogFragment = AddressDialogFragment.newInstance(locationAddress);
                     addressDialogFragment.show(fm, DIALOG_ADDRESS);
                 }

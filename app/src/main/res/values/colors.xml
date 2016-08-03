@@ -5,7 +5,9 @@
     <color name="colorAccent">#3F51B5</color>
 
     <color name="white">@android:color/white</color>
+    <color name="black">@android:color/black</color>
     <color name="gray">@android:color/darker_gray</color>
+    <color name="transparent">#80000000</color>
 
     <color name="signUpBackground">#E6E6E6</color>
     <color name="navigatorColor">@android:color/holo_blue_light</color>

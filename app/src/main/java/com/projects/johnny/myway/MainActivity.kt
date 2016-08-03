@@ -1,44 +1,27 @@
 package com.projects.johnny.myway
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import android.support.v7.widget.Toolbar
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        val locationRequestCode = 2
+    }
 
     var backEnabled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_container)
+        setContentView(R.layout.activity_main)
+
+        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        setSupportActionBar(toolbar)
 
         fragmentManager.beginTransaction()
-                        .add(R.id.fragment_container, DirectionsFragment.newInstance())
+                        .add(R.id.fragment_container, DirectionsFragment.newInstance(null)) // TODO: Pass credentials to directionsFragment?
                         .commit()
-
-        // Request permissions again if they were not accepted at SignInActivity
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION), SignInActivity.locationRequestcode)
-                Log.i("Location Check", "Completed")
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
     }
 
     override fun onBackPressed() {

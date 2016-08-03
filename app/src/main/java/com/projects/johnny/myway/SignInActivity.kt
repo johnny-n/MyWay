@@ -43,7 +43,7 @@ class SignInActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_container)
+        setContentView(R.layout.activity_sign_in)
         requestPermissions()
 
         Firebase.setAndroidContext(this)
@@ -75,6 +75,7 @@ class SignInActivity : AppCompatActivity() {
                     override fun onAuthenticated(authData: AuthData) {
                         App.getInstance().uid = authData.uid
                         val intent = Intent(applicationContext, MainActivity::class.java)
+                        val args = Bundle()
                         startActivity(intent)
                         finish() // Finish activity
                     }
