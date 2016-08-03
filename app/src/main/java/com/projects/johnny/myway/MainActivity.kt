@@ -1,5 +1,7 @@
 package com.projects.johnny.myway
 
+import android.app.Fragment
+import android.app.FragmentManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
@@ -8,6 +10,11 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         val locationRequestCode = 2
+        fun setFragment(fragment: Fragment, fm: FragmentManager, addToBackStack: Boolean = false) {
+            fm.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
