@@ -33,7 +33,10 @@ class SignInFragment : Fragment() {
             }
         }
         signUpButton.onClick { // onClick belongs to anko
-            // TODO: set up listener to start SignUpFragment
+            fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, SignUpFragment())
+                .addToBackStack("null")
+                .commit()
         }
         signInButton.setOnClickListener {
             if (isValid()) {

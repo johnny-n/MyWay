@@ -40,7 +40,7 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/sign_up_first_name_edit_text"
+                android:id="@+id/firstName"
                 android:hint="@string/sign_up_first_name_hint"
                 android:maxLength="12"
                 android:layout_weight="1"
@@ -49,7 +49,7 @@
                 style="@style/SignUpEditText"/>
 
             <EditText
-                android:id="@+id/sign_up_last_name_edit_text"
+                android:id="@+id/lastName"
                 android:hint="@string/sign_up_last_name_hint"
                 android:maxLength="12"
                 android:layout_weight="1"
@@ -66,14 +66,14 @@
             style="@style/SignUpTextView"/>
 
         <EditText
-            android:id="@+id/username_create_edit_text"
+            android:id="@+id/username"
             android:hint="@string/username_hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/SignUpEditText"/>
 
         <TextView
-            android:id="@+id/username_retry_text_view"
+            android:id="@+id/usernameRetryText"
             android:text="Please enter a valid email address"
             android:textColor="@android:color/holo_red_light"
             android:layout_width="wrap_content"
@@ -86,7 +86,7 @@
             style="@style/SignUpTextView"/>
 
         <EditText
-            android:id="@+id/password_create_edit_text"
+            android:id="@+id/password"
             android:maxLength="15"
             android:password="true"
             android:inputType="textPassword"
@@ -101,7 +101,7 @@
             style="@style/SignUpTextView"/>
 
         <EditText
-            android:id="@+id/password_confirm_edit_text"
+            android:id="@+id/passwordConfirm"
             android:maxLength="15"
             android:password="true"
             android:inputType="textPassword"
@@ -110,14 +110,14 @@
             style="@style/SignUpEditText"/>
 
         <TextView
-            android:id="@+id/password_retry_text_view"
+            android:id="@+id/passwordRetryText"
             android:text="These password's don't match. Try again?"
             android:textColor="@android:color/holo_red_light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <Button
-            android:id="@+id/sign_up_complete_button"
+            android:id="@+id/signUpCompleteButton"
             android:text="@string/sign_up_complete_button"
             android:background="@drawable/primary_button_selector"
             android:layout_gravity="right"

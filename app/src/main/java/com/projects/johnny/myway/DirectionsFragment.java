@@ -374,7 +374,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         final FragmentManager fm = getFragmentManager();
-                        Fragment fragment = AddLocationFragment.newInstance();
+                        Fragment fragment = AddLocationFragment.Companion.newInstance();
                         fm.beginTransaction()
                                 .replace(R.id.fragment_container, fragment)
                                 .addToBackStack(null)

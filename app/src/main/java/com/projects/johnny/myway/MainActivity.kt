@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
                         .add(R.id.fragment_container, SignInFragment()) // TODO: Pass credentials to directionsFragment?
                         .commit()
 
+        // TODO: Handle situation where user decides to "never" save credentials using Google smart lock
         // Check for saved credentials
         Auth.CredentialsApi.request(credentialsClient, credentialRequest).setResultCallback {
             result: CredentialRequestResult ->
@@ -82,9 +83,10 @@ class MainActivity : AppCompatActivity() {
                 object: Firebase.AuthResultHandler {
                     override fun onAuthenticated(authData: AuthData) {
                         App.getInstance().uid = authData.uid
+                        // TODO: Move fragment transaction to be peformed on main thread?
                         fragmentManager.beginTransaction()
-                            .replace(R.id.fragment_container, DirectionsFragment.newInstance(credential))
-                            .commit()
+                                .replace(R.id.fragment_container, DirectionsFragment.newInstance(credential))
+                                .commit()
                     }
                     override fun onAuthenticationError(error: FirebaseError?) {
                         Toast.makeText(applicationContext, "Failed to log in...", Toast.LENGTH_SHORT).show()
@@ -98,7 +100,7 @@ class MainActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                // Show an expanation to the user *asynchronously* -- don't block
+                // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
             } else {
