@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                         // TODO: Move fragment transaction to be peformed on main thread?
                         fragmentManager.beginTransaction()
                                 .replace(R.id.fragment_container, DirectionsFragment.newInstance(credential))
-                                .commit()
+                                .commitAllowingStateLoss()
                     }
                     override fun onAuthenticationError(error: FirebaseError?) {
                         Toast.makeText(applicationContext, "Failed to log in...", Toast.LENGTH_SHORT).show()
@@ -115,5 +115,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 }

@@ -32,12 +32,14 @@ class SignInFragment : Fragment() {
                 usernameRetry.visibility = visibility
             }
         }
+
         signUpButton.onClick { // onClick belongs to anko
             fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, SignUpFragment())
                 .addToBackStack("null")
                 .commit()
         }
+
         signInButton.setOnClickListener {
             if (isValid()) {
                 with(activity as MainActivity) {
