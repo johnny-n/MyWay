@@ -64,7 +64,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
 
     // Used as a placeholder in Firebase.
     // We overwrite this in Firebase to activite the listener for updates
-    public static final String FIREBASE_REFRESH_PLACEHOLDER = "REFRESH";
+    private static final String FIREBASE_REFRESH_PLACEHOLDER = "REFRESH";
     private static final String DIALOG_ADDRESS = "dialog_address";
 
     public static DirectionsFragment newInstance(Credential credential) {
@@ -105,8 +105,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         mLocations = new ArrayList<>();
 
         // Get reference to Firebase
-        String UID = App.getInstance()
-                        .getUID();
+        String UID = App.getInstance().getUID();
         Firebase.setAndroidContext(getActivity());
         mFirebaseRef = new Firebase("https://myways.firebaseIO.com/").child(UID);
 
@@ -216,7 +215,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
     // Updates our list of mLocations stored in the fragment
     private void updateLocationsWithDataSnapshot(DataSnapshot dataSnapshot) {
         // Obtain location data as Map object and iterate through, adding to mLocations variable
-        mLocations = new ArrayList<>();
+        this.mLocations = new ArrayList<>();
         Map<String, String> mLocations = (Map<String, String>) dataSnapshot.getValue();
         Iterator it = mLocations.entrySet().iterator();
         while (it.hasNext()) {
@@ -233,7 +232,7 @@ public class DirectionsFragment extends Fragment implements GoogleApiClient.Conn
         int locationMode = 0;
         String locationProviders;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             try {
                 locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
             } catch (Settings.SettingNotFoundException e) {

@@ -9,13 +9,13 @@
     android:focusableInTouchMode="true">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+        android:id="@+id/recyclerView"
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
     <TextView
-        android:id="@+id/add_place_text_view"
+        android:id="@+id/addPlaceTextView"
         android:textSize="30sp"
         android:layout_gravity="center"
         android:gravity="center_vertical|center_horizontal"
@@ -24,7 +24,7 @@
         android:layout_height="200dp"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add_location_fab"
+        android:id="@+id/addLocationFab"
         android:src="@drawable/ic_add_white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
         style="@style/FloatingActionButton"/>
 
     <FrameLayout
-        android:id="@+id/circular_reveal_view"
+        android:id="@+id/circularRevealView"
         android:background="@color/colorAccent"
         android:visibility="invisible"
         android:layout_width="match_parent"

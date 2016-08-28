@@ -45,7 +45,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         requestPermissions()
+    }
 
+    fun setupActivity() {
         Firebase.setAndroidContext(this)
         credentialsClient.connect()
 
@@ -53,8 +55,8 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         fragmentManager.beginTransaction()
-                        .add(R.id.fragment_container, SignInFragment()) // TODO: Pass credentials to directionsFragment?
-                        .commit()
+                .add(R.id.fragment_container, SignInFragment()) // TODO: Pass credentials to directionsFragment?
+                .commit()
 
         // TODO: Handle situation where user decides to "never" save credentials using Google smart lock
         // Check for saved credentials
@@ -98,21 +100,26 @@ class MainActivity : AppCompatActivity() {
     fun requestPermissions() {
         // Request permissions
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
+                // Show an explanation to the user *asynchronously* -- don't block this thread waiting for the user's response!
+                // After the user sees the explanation, try again to request the permission.
             } else {
                 // No explanation needed, we can request the permission.
-
                 ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION), locationRequestCode)
                 Log.i("Location Check", "Completed")
-
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
+        } else {
+            // Permission already granted
+            setupActivity()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == locationRequestCode) {
+            setupActivity()
         }
     }
 }
