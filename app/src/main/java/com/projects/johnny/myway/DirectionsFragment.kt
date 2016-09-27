@@ -1,9 +1,7 @@
 package com.projects.johnny.myway
 
 import android.animation.Animator
-import android.app.Activity
 import android.app.Fragment
-import android.app.FragmentManager
 import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
@@ -18,9 +16,6 @@ import android.support.v7.widget.helper.ItemTouchHelper
 import android.text.TextUtils
 import android.util.Log
 import android.view.*
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import com.firebase.client.DataSnapshot
 import com.firebase.client.Firebase
 import com.firebase.client.FirebaseError
@@ -34,17 +29,17 @@ import com.google.maps.GeoApiContext
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks as ConnectionCallbacks
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener as OnConnectionFailedListener
 import kotlinx.android.synthetic.main.fragment_directions.*
-import kotlinx.android.synthetic.main.direction_list_item_card_view.*
+import kotlinx.android.synthetic.main.direction_list_item_card_view.view.*
 import java.util.*
 
-class DFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailedListener {
+class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailedListener {
 
     companion object {
         private val arg_cred = "ARG_CRED"
         private val firebase_refresh_placeholder = "REFRESH"
         private val dialog_address = "dialog_address"
-        fun newInstance(credential: Credential): DFragment {
-            val fragment = DFragment()
+        fun newInstance(credential: Credential): DirectionsFragment {
+            val fragment = DirectionsFragment()
             val args = Bundle()
             args.putParcelable(arg_cred, credential)
             fragment.arguments = args
@@ -63,8 +58,11 @@ class DFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailedListener 
     lateinit var firebaseRef: Firebase
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.fragment_directions, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        super.onCreateView(inflater, container, savedInstanceState)
+        return inflater.inflate(R.layout.fragment_directions, container, false)
+    }
+
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -122,7 +120,7 @@ class DFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailedListener 
         // Set up Handler & HandlerThread to do background task
         val responseHandler = Handler()
         etaHandlerThread = EtaHandlerThread(responseHandler, geoApiContext, latitude, longitude)
-        etaHandlerThread.setEtaInterface { viewHolder, travelTime -> viewHolder.setEtaTime(travelTime) }
+        etaHandlerThread.setEtaInterface { viewHolder, travelTime -> viewHolder.etaTime = travelTime }
         etaHandlerThread.start()
         etaHandlerThread.looper
 
@@ -225,10 +223,10 @@ class DFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailedListener 
     fun updateLocationsWithDataSnapshot(dataSnapshot: DataSnapshot) {
         // Obtain location data as Map object and iterate through, adding to locations variable
         locations = ArrayList<MyLocation>()
-        val mapDataSnapshot = dataSnapshot.value as? Map<String, String>
-        val iterator = mapDataSnapshot?.entries.iterator()
+        val mapDataSnapshot = dataSnapshot.value as Map<String, String>
+        val iterator = mapDataSnapshot.entries.iterator()
         while (iterator.hasNext()) {
-            val pair = iterator.next() as Map.Entry
+            val pair = iterator.next()
             val location = MyLocation(pair.key.toString(), pair.value.toString())
             if (!(pair.key.toString() == firebase_refresh_placeholder)) {
                 locations.add(location)
@@ -247,29 +245,29 @@ class DFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailedListener 
 
     inner class DirectionItemViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
 
-        lateinit var titleOfPlace: String
-        var etaTime: String = ""
+        var titleOfPlace: String = ""
+        var etaTime: String
+            get() = this.etaTime
             set(newEtaTime: String) {
-                etaTime = newEtaTime
-                travelTimeItemTextView.setText(etaTime)
+                v.travelTimeItemTextView.setText(etaTime)
             }
 
         fun setListItems(location: MyLocation) {
             titleOfPlace = location.nameOfPlace
             val locationAddress = location.address
 
-            addressItemTextView.setText(titleOfPlace)
+            v.addressItemTextView.setText(titleOfPlace)
 
             // Use implicit intent to use Google Maps
-            navigatorItemButton.setOnClickListener {
+            v.navigatorItemButton.setOnClickListener {
                 val gmmIntentUri = Uri.parse("geo:0,0?q=$location")
                 val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
                 mapIntent.setPackage("come.google.android.apps.maps")
                 Fragment().startActivity(mapIntent)
             }
-            displayAddressIcon.setOnClickListener {
+            v.displayAddressIcon.setOnClickListener {
                 val addressDialogFragment = AddressDialogFragment.newInstance(locationAddress)
-                val fm = this@DFragment.fragmentManager
+                val fm = this@DirectionsFragment.fragmentManager
                 addressDialogFragment.show(fm, dialog_address)
             }
         }
