@@ -48,7 +48,7 @@ class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailed
     }
 
     // Instance of GeoApiContext required to use Google Maps API
-    val geoApiContext = GeoApiContext().setApiKey("AIzaSyAXSGlwghZsgIFWY2PIBYeyAD-Opq0pP2g")
+    val geoApiContext = GeoApiContext().setApiKey("AIzaSyAcOEo__Vf3mXiH0G6nzVv2i9G_M0KZ1B8")
     var locations = ArrayList<MyLocation>()
     var googleApiClient: GoogleApiClient? = null
     var isFabRotated: Boolean = false
@@ -135,6 +135,7 @@ class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailed
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
         updateUI()
+        addLocationFab.setOnClickListener(fabOnClickListener())
     }
 
     fun updateUI() {
@@ -246,8 +247,7 @@ class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailed
     inner class DirectionItemViewHolder(val v: View) : RecyclerView.ViewHolder(v) {
 
         var titleOfPlace: String = ""
-        var etaTime: String
-            get() = this.etaTime
+        var etaTime: String = "0"
             set(newEtaTime: String) {
                 v.travelTimeItemTextView.setText(etaTime)
             }
@@ -328,8 +328,7 @@ class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailed
         Log.e("GoogleApiClient", connectionResult.errorMessage)
     }
 
-    fun fabOnClickListener(): View.OnClickListener = View.OnClickListener {
-        view ->
+    fun fabOnClickListener(): View.OnClickListener = View.OnClickListener { view ->
         view.isEnabled = false
 
         // Determine center of circular reveal depending on text or FAB clicked

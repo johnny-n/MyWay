@@ -28,7 +28,7 @@
         <!-- API KEY for Google Places API -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAXSGlwghZsgIFWY2PIBYeyAD-Opq0pP2g" />
+            android:value="AIzaSyDDpT9pllYo7fLSPSjfY8MXY9WusO3PBb4" />
     </application>
 
 </manifest>
