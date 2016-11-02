@@ -42,7 +42,7 @@ class AddLocationFragment : Fragment() {
             override fun onPlaceSelected(place: Place) {
                 locationAddress = place.address.toString()
                 autocompleteFrag.setText(locationAddress)
-                // Enable utton after selecting a place
+                // Enable button after selecting a place
                 // TODO: Gray out button when it is disabled?
                 addPlaceButton.enabled = true
             }

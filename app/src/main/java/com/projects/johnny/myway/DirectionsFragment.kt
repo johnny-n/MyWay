@@ -49,6 +49,7 @@ class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailed
 
     // Instance of GeoApiContext required to use Google Maps API
     val geoApiContext = GeoApiContext().setApiKey("AIzaSyAcOEo__Vf3mXiH0G6nzVv2i9G_M0KZ1B8")
+    // AIzaSyAcOEo__Vf3mXiH0G6nzVv2i9G_M0KZ1B8
     var locations = ArrayList<MyLocation>()
     var googleApiClient: GoogleApiClient? = null
     var isFabRotated: Boolean = false
@@ -58,11 +59,8 @@ class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailed
     lateinit var firebaseRef: Firebase
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-        return inflater.inflate(R.layout.fragment_directions, container, false)
-    }
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
+        inflater.inflate(R.layout.fragment_directions, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -120,7 +118,8 @@ class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailed
         // Set up Handler & HandlerThread to do background task
         val responseHandler = Handler()
         etaHandlerThread = EtaHandlerThread(responseHandler, geoApiContext, latitude, longitude)
-        etaHandlerThread.setEtaInterface { viewHolder, travelTime -> viewHolder.etaTime = travelTime }
+        etaHandlerThread.setEtaInterface { viewHolder, travelTime ->
+            viewHolder.etaTime = travelTime }
         etaHandlerThread.start()
         etaHandlerThread.looper
 
