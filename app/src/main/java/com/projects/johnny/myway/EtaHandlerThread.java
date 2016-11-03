@@ -3,6 +3,7 @@ package com.projects.johnny.myway;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.util.Log;
 
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
@@ -64,12 +65,13 @@ public class EtaHandlerThread<T> extends HandlerThread {
                 .mode(TravelMode.DRIVING);
 
         directionsApiRequest.destination(locationAddress);
-        DirectionsResult result;
+        final DirectionsResult result;
         try {
             // Obtain result from api request
             result = directionsApiRequest.await();
             // Obtain travel time deep within result
             final String travelTime = result.routes[0].legs[0].duration.humanReadable;
+            Log.d(TAG, "Travel time: " + travelTime);
 
             final DirectionsFragment.DirectionItemViewHolder viewHolder = (DirectionsFragment.DirectionItemViewHolder) target;
             mResponseHandler.post(new Runnable() {

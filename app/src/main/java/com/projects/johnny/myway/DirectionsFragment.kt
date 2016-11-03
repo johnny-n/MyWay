@@ -48,8 +48,8 @@ class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailed
     }
 
     // Instance of GeoApiContext required to use Google Maps API
-    val geoApiContext = GeoApiContext().setApiKey("AIzaSyAcOEo__Vf3mXiH0G6nzVv2i9G_M0KZ1B8")
-    // AIzaSyAcOEo__Vf3mXiH0G6nzVv2i9G_M0KZ1B8
+    // Using server key
+    val geoApiContext = GeoApiContext().setApiKey("AIzaSyBi5TCA2EQsN0D0DXb7n0WpJ2lCWv-SHb4")
     var locations = ArrayList<MyLocation>()
     var googleApiClient: GoogleApiClient? = null
     var isFabRotated: Boolean = false
@@ -247,8 +247,9 @@ class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailed
 
         var titleOfPlace: String = ""
         var etaTime: String = "0"
-            set(newEtaTime: String) {
-                v.travelTimeItemTextView.setText(etaTime)
+            set(newEtaTime) {
+                field = newEtaTime
+                v.travelTimeItemTextView.setText(field)
             }
 
         fun setListItems(location: MyLocation) {
@@ -331,8 +332,8 @@ class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailed
         view.isEnabled = false
 
         // Determine center of circular reveal depending on text or FAB clicked
-        var x = 0
-        var y = 0
+        val x: Int
+        val y: Int
         if (view.id == addPlaceTextView.id) {
             x = view.right / 2
             y = view.bottom / 2
