@@ -22,8 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".RequestLocationActivity"
-            android:screenOrientation="portrait"/>
 
         <!-- API KEY for Google Places API -->
         <meta-data

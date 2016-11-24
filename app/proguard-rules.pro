@@ -18,3 +18,4 @@
 -keepclassmembers class com.projects.johnny.myway {
     public *;
 }
+-dontwarn okio.**

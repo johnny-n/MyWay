@@ -24,12 +24,12 @@ import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener
 import com.google.android.gms.location.LocationServices
 import com.google.maps.GeoApiContext
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks as ConnectionCallbacks
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener as OnConnectionFailedListener
-import kotlinx.android.synthetic.main.fragment_directions.*
 import kotlinx.android.synthetic.main.direction_list_item_card_view.view.*
+import kotlinx.android.synthetic.main.fragment_directions.*
 import java.util.*
 
 class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailedListener {
@@ -57,7 +57,6 @@ class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailed
     lateinit var directionAdapter: DirectionAdapter
     lateinit var credential: Credential
     lateinit var firebaseRef: Firebase
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
         inflater.inflate(R.layout.fragment_directions, container, false)
@@ -162,8 +161,8 @@ class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailed
         inflater.inflate(R.menu.directions_menu, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.ic_menu_refresh -> {
                 context.makeText("Refreshing...")
                 updateUI()
@@ -260,15 +259,18 @@ class DirectionsFragment() : Fragment(), ConnectionCallbacks, OnConnectionFailed
 
             // Use implicit intent to use Google Maps
             v.navigatorItemButton.setOnClickListener {
-                val gmmIntentUri = Uri.parse("geo:0,0?q=$location")
+                val gmmIntentUri = Uri.parse("geo:0,0?q=$locationAddress")
                 val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-                mapIntent.setPackage("come.google.android.apps.maps")
-                Fragment().startActivity(mapIntent)
+                mapIntent.setPackage("com.google.android.apps.maps")
+                startActivity(mapIntent)
             }
             v.displayAddressIcon.setOnClickListener {
                 val addressDialogFragment = AddressDialogFragment.newInstance(locationAddress)
                 val fm = this@DirectionsFragment.fragmentManager
                 addressDialogFragment.show(fm, dialog_address)
+//                val animatedDialogFragment = AnimatedDialogFragment()
+//                val fm = this@DirectionsFragment.fragmentManager
+//                animatedDialogFragment.show(fm, dialog_address)
             }
         }
     }
